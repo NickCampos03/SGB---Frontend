@@ -1,4 +1,4 @@
-import { FiBook, FiUsers, FiList } from 'react-icons/fi';
+import { FiBook, FiUsers, FiList, FiBookmark } from 'react-icons/fi';
 import reactLogo from './assets/icons8-user-50.png';
 
 export default function SideMenu({ perfil, selected, onSelect }) {
@@ -28,6 +28,14 @@ export default function SideMenu({ perfil, selected, onSelect }) {
             onClick={() => onSelect('usuarios')}
           >
             <FiUsers size={22} /> Usuários
+          </button>
+        )}
+        {(perfil === 'ADMIN' || perfil === 'BIBLIOTECARIO') && (
+          <button
+            className={selected === 'Generos' ? 'sgb-menu-btn selected' : 'sgb-menu-btn'}
+            onClick={() => onSelect('generos')}
+          >
+            <FiBookmark size={22} /> Genero
           </button>
         )}
       </div>

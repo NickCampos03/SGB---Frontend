@@ -5,7 +5,7 @@ export default function LivrosPage({ user, isAdminOrBiblio }) {
   const [livrosFiltrados, setLivrosFiltrados] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [filtros, setFiltros] = useState({ nome: '', autor: '', genero: '', disponibilidade: 'DISPONIVEL' });
+  const [filtros, setFiltros] = useState({ nome: '', autor: '', genero: '', disponibilidade: '' });
   const [generos, setGeneros] = useState([]);
   const [showCreate, setShowCreate] = useState(false);
   const [showLivro, setShowLivro] = useState(null);
@@ -23,21 +23,29 @@ export default function LivrosPage({ user, isAdminOrBiblio }) {
 
   // --- Buscar livros ---
   function buscarLivros() {
-    setLoading(true);
-    setError('');
-    const params = [];
-    if (filtros.genero) params.push(`generoId=${Number(filtros.genero)}`);
-    if (filtros.disponibilidade) params.push(`disponibilidade=${(filtros.disponibilidade)}`);
-    const query = params.length ? `?${params.join('&')}` : '';
+  setLoading(true);
+  setError('');
 
-    fetch(`http://localhost:8080/livros${query}`, {
-      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+  const queryParams = new URLSearchParams();
+  if (filtros.genero) queryParams.append("generoId", Number(filtros.genero));
+  if (filtros.disponibilidade) queryParams.append("disponibilidade", filtros.disponibilidade);
+
+  const query = queryParams.toString() ? `?${queryParams.toString()}` : "";
+
+  fetch(`http://localhost:8080/livros${query}`, {
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${localStorage.getItem('token')}`
+    }
+  })
+    .then(res => {
+      if (!res.ok) throw new Error(`Erro ${res.status}`);
+      return res.json();
     })
-      .then(res => res.json())
-      .then(data => setLivros(Array.isArray(data) ? data : []))
-      .catch(() => setError('Erro ao buscar livros.'))
-      .finally(() => setLoading(false));
-  }
+    .then(data => setLivros(Array.isArray(data) ? data : []))
+    .catch(() => setError('Erro ao buscar livros.'))
+    .finally(() => setLoading(false));
+}
 
   useEffect(() => { buscarLivros(); }, [filtros.genero, filtros.disponibilidade]);
 

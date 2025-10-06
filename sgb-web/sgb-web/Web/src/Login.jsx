@@ -51,6 +51,7 @@ export default function Login({ onLogin }) {
       />
       <button type="submit" disabled={loading}>{loading ? 'Entrando...' : 'Entrar'}</button>
       {error && <div className="sgb-error">{error}</div>}
+      <button type="submit" disabled={loading}>{loading ? 'Abrindo Cadastro...' : 'Cadastrar'}</button>
     </form>
   );
 }

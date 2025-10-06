@@ -27,10 +27,17 @@ export default function UsuarioPage({ user }) {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
     })
       .then(res => res.json())
-      .then(data => setUsuarios(Array.isArray(data) ? data : []))
+      .then(data => {
+        let lista = Array.isArray(data) ? data : [];
+        // 🔒 Filtra: bibliotecário NÃO vê admins
+        if (isBiblio) {
+          lista = lista.filter(u => u.perfil !== 'ADMIN');
+        }
+        setUsuarios(lista);
+      })
       .catch(() => setError('Erro ao buscar usuários.'))
       .finally(() => setLoading(false));
-  }, [filtroPerfil, reload]);
+  }, [filtroPerfil, reload, isBiblio]);
 
   function handlePerfilChange(e) {
     setFiltroPerfil(e.target.value);
@@ -48,11 +55,23 @@ export default function UsuarioPage({ user }) {
   return (
     <>
       <h2>Usuários</h2>
-      <div className="sgb-livros-filtros" style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: 12 }}>
-        <button className="sgb-btn-criar-livro" type="button" style={{ marginRight: 8 }} onClick={() => setShowCreate(true)}>+ Novo</button>
+      <div
+        className="sgb-livros-filtros"
+        style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: 12 }}
+      >
+        <button
+          className="sgb-btn-criar-livro"
+          type="button"
+          style={{ marginRight: 8 }}
+          onClick={() => setShowCreate(true)}
+        >
+          + Novo
+        </button>
         <select name="perfil" value={filtroPerfil} onChange={handlePerfilChange} style={{ minWidth: 180 }}>
           {PERFIS.map(p => (
-            <option key={p.value} value={p.value}>{p.label}</option>
+            <option key={p.value} value={p.value}>
+              {p.label}
+            </option>
           ))}
         </select>
       </div>
@@ -61,15 +80,18 @@ export default function UsuarioPage({ user }) {
         {usuarios.map(u => (
           <UsuarioCard key={u.codigologin} usuario={u} onClick={() => handleCardClick(u)} />
         ))}
-        {(!loading && usuarios.length === 0 && !error) && <p>Nenhum usuário encontrado.</p>}
+        {!loading && usuarios.length === 0 && !error && <p>Nenhum usuário encontrado.</p>}
       </div>
       {showModal && (
-        <UsuarioModal usuario={showModal} onClose={handleCloseModal} />
+        <UsuarioModal usuario={showModal} onClose={handleCloseModal} perfilLogado={user?.perfil} />
       )}
       {showCreate && (
         <CriarUsuarioModal
           onClose={() => setShowCreate(false)}
-          onCreated={() => { setShowCreate(false); setReload(r => !r); }}
+          onCreated={() => {
+            setShowCreate(false);
+            setReload(r => !r);
+          }}
           isAdmin={isAdmin}
           isBiblio={isBiblio}
         />
@@ -80,9 +102,16 @@ export default function UsuarioPage({ user }) {
 
 function UsuarioCard({ usuario, onClick }) {
   return (
-    <div className="sgb-emprestimo-card sgb-emprestimo-card-clickable" onClick={onClick} tabIndex={0} style={{ cursor: 'pointer' }}>
+    <div
+      className="sgb-emprestimo-card sgb-emprestimo-card-clickable"
+      onClick={onClick}
+      tabIndex={0}
+      style={{ cursor: 'pointer' }}
+    >
       <div>
-        <div className="sgb-emprestimo-codigo" style={{ marginBottom: '0.5rem' }}>Usuário #{usuario.codigologin}</div>
+        <div className="sgb-emprestimo-codigo" style={{ marginBottom: '0.5rem' }}>
+          Usuário #{usuario.codigologin}
+        </div>
         <div><b>Nome:</b> {usuario.nome}</div>
         <div><b>Email:</b> {usuario.email}</div>
         <div><b>Telefone:</b> {usuario.telefone}</div>
@@ -93,15 +122,15 @@ function UsuarioCard({ usuario, onClick }) {
   );
 }
 
-function UsuarioModal({ usuario, onClose }) {
+function UsuarioModal({ usuario, onClose, perfilLogado }) {
   const [editMode, setEditMode] = useState(false);
   const [form, setForm] = useState({ ...usuario });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
   const [atualizou, setAtualizou] = useState(false);
-  const perfilLogado = localStorage.getItem('perfil');
   const isAdmin = perfilLogado === 'ADMIN';
+  const isBiblio = perfilLogado === 'BIBLIOTECARIO';
 
   function handleChange(e) {
     setForm(f => ({ ...f, [e.target.name]: e.target.value }));
@@ -129,8 +158,8 @@ function UsuarioModal({ usuario, onClose }) {
         perfil: form.perfil,
       }),
     })
-      .then(res => res.ok ? res.json() : Promise.reject(res))
-      .then(data => {
+      .then(res => (res.ok ? res.json() : Promise.reject(res)))
+      .then(() => {
         setSuccess('Usuário atualizado com sucesso!');
         setEditMode(false);
         setAtualizou(true);
@@ -150,16 +179,14 @@ function UsuarioModal({ usuario, onClose }) {
         if (res.ok) {
           setSuccess('Usuário excluído com sucesso!');
           setAtualizou(true);
-          setTimeout(() => onClose(true), 1200);
+          setTimeout(() => onClose(true), 1000);
         } else {
-
-            return res.text().then(text => {
-              setError('Erro ao excluir usuário. '+text);
-            });
-          setError('Erro ao excluir usuário.');
+          return res.text().then(text => {
+            setError('Erro ao excluir usuário. ' + text);
+          });
         }
       })
-      .catch((e) => setError('Erro ao excluir usuário. aqui'+ e))
+      .catch(() => setError('Erro ao excluir usuário.'))
       .finally(() => setLoading(false));
   }
 
@@ -167,30 +194,57 @@ function UsuarioModal({ usuario, onClose }) {
     onClose(atualizou);
   }
 
+  // 🔒 Regras de permissão:
+  const podeEditar = isAdmin || (isBiblio && usuario.perfil === 'USUARIO');
+  const podeExcluir = isAdmin || (isBiblio && usuario.perfil === 'USUARIO');
+
   return (
     <div className="sgb-modal-bg">
       <form className="sgb-modal-form" onSubmit={handleSalvar}>
         <button className="sgb-modal-close-x" onClick={handleClose} type="button" title="Fechar">×</button>
         <h3>Usuário #{usuario.codigologin}</h3>
+
         <label>Nome</label>
         <input type="text" name="nome" value={form.nome} onChange={handleChange} disabled={!editMode} />
+
         <label>Email</label>
         <input type="email" name="email" value={form.email} onChange={handleChange} disabled={!editMode} />
+
         <label>Telefone</label>
         <input type="text" name="telefone" value={form.telefone} onChange={handleChange} disabled={!editMode} />
+
         <label>Idade</label>
         <input type="number" name="idade" value={form.idade} onChange={handleChange} disabled={!editMode} />
+
         <label>Perfil</label>
         <input type="text" name="perfil" value={form.perfil} disabled />
+
         {error && <div className="sgb-error">{error}</div>}
         {success && <div className="sgb-success">{success}</div>}
+
         <div className="sgb-modal-actions">
-          {(usuario.perfil === 'USUARIO' && !editMode || isAdmin) && (
-            <button type="button" className="sgb-btn-editar" onClick={handleEditar}>Editar</button>
+          {!editMode && podeEditar && (
+            <button type="button" className="sgb-btn-editar" onClick={handleEditar}>
+              Editar
+            </button>
           )}
 
           {editMode && (
-            <button type="submit" className="sgb-btn-salvar" disabled={loading}>{loading ? 'Salvando...' : 'Salvar'}</button>
+            <button type="submit" className="sgb-btn-salvar" disabled={loading}>
+              {loading ? 'Salvando...' : 'Salvar'}
+            </button>
+          )}
+
+          {podeExcluir && (
+            <button
+              type="button"
+              className="sgb-btn-excluir"
+              style={{ backgroundColor: '#e53935', color: 'white' }}
+              onClick={handleExcluir}
+              disabled={loading}
+            >
+              {loading ? 'Excluindo...' : 'Excluir'}
+            </button>
           )}
         </div>
       </form>
@@ -199,7 +253,15 @@ function UsuarioModal({ usuario, onClose }) {
 }
 
 function CriarUsuarioModal({ onClose, onCreated, isAdmin, isBiblio }) {
-  const [form, setForm] = useState({ nome: '', email: '', telefone: '', idade: '', perfil: isBiblio ? 'USUARIO' : '', senha: '', senha2: '' });
+  const [form, setForm] = useState({
+    nome: '',
+    email: '',
+    telefone: '',
+    idade: '',
+    perfil: isBiblio ? 'USUARIO' : '',
+    senha: '',
+    senha2: '',
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -234,7 +296,7 @@ function CriarUsuarioModal({ onClose, onCreated, isAdmin, isBiblio }) {
         senha: form.senha,
       }),
     })
-      .then(res => res.ok ? res.json() : Promise.reject(res))
+      .then(res => (res.ok ? res.json() : Promise.reject(res)))
       .then(() => {
         onCreated();
       })
@@ -247,10 +309,12 @@ function CriarUsuarioModal({ onClose, onCreated, isAdmin, isBiblio }) {
       <form className="sgb-modal-form" onSubmit={handleSubmit}>
         <button className="sgb-modal-close-x" onClick={onClose} type="button" title="Fechar">×</button>
         <h3>Novo Usuário</h3>
+
         <input type="text" name="nome" placeholder="Nome" value={form.nome} onChange={handleChange} required />
         <input type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange} required />
         <input type="text" name="telefone" placeholder="Telefone" value={form.telefone} onChange={handleChange} required />
         <input type="number" name="idade" placeholder="Idade" value={form.idade} onChange={handleChange} required />
+
         {isAdmin ? (
           <select name="perfil" value={form.perfil} onChange={handleChange} required>
             <option value="">Selecione o perfil</option>
@@ -261,12 +325,18 @@ function CriarUsuarioModal({ onClose, onCreated, isAdmin, isBiblio }) {
         ) : (
           <input type="text" name="perfil" value="USUARIO" disabled />
         )}
+
         <input type="password" name="senha" placeholder="Senha" value={form.senha} onChange={handleChange} required />
         <input type="password" name="senha2" placeholder="Confirmar senha" value={form.senha2} onChange={handleChange} required />
+
         {error && <div className="sgb-error">{error}</div>}
         <div className="sgb-modal-actions">
-          <button type="submit" disabled={loading}>{loading ? 'Salvando...' : 'Salvar'}</button>
-          <button type="button" className="sgb-btn-cancelar" onClick={onClose}>Cancelar</button>
+          <button type="submit" disabled={loading}>
+            {loading ? 'Salvando...' : 'Salvar'}
+          </button>
+          <button type="button" className="sgb-btn-cancelar" onClick={onClose}>
+            Cancelar
+          </button>
         </div>
       </form>
     </div>

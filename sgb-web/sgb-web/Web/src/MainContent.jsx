@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import LivrosPage from './LivrosPage';
 import EmprestimosPage from './EmprestimosPage';
 import UsuarioPage from './UsuarioPage';
+import GeneroPage from './GeneroPage';
 
 export default function MainContent({ selected, user, onLogout }) {
   const isAdminOrBiblio = user?.perfil === 'ADMIN' || user?.perfil === 'BIBLIOTECARIO';
@@ -15,6 +16,7 @@ export default function MainContent({ selected, user, onLogout }) {
         <EmprestimosPage />
       )}
       {selected === 'usuarios' && <UsuarioPage user={user} />}
+      {selected === 'generos' && <GeneroPage />}
       {selected === 'perfil' && (
         <div>
           <h2>Meu Perfil</h2>

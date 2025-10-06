@@ -16,6 +16,14 @@ export default function SideMenu({ perfil, selected, onSelect }) {
         >
           <FiBook size={22} /> Livros
         </button>
+        {(perfil === 'ADMIN' || perfil === 'BIBLIOTECARIO') && (
+          <button
+            className={selected === 'Generos' ? 'sgb-menu-btn selected' : 'sgb-menu-btn'}
+            onClick={() => onSelect('generos')}
+          >
+            <FiBookmark size={22} /> Genero
+          </button>
+        )}
         <button
           className={selected === 'emprestimos' ? 'sgb-menu-btn selected' : 'sgb-menu-btn'}
           onClick={() => onSelect('emprestimos')}
@@ -28,14 +36,6 @@ export default function SideMenu({ perfil, selected, onSelect }) {
             onClick={() => onSelect('usuarios')}
           >
             <FiUsers size={22} /> Usuários
-          </button>
-        )}
-        {(perfil === 'ADMIN' || perfil === 'BIBLIOTECARIO') && (
-          <button
-            className={selected === 'Generos' ? 'sgb-menu-btn selected' : 'sgb-menu-btn'}
-            onClick={() => onSelect('generos')}
-          >
-            <FiBookmark size={22} /> Genero
           </button>
         )}
       </div>

@@ -101,6 +101,7 @@ body {
   border-radius: 8px;
   font-size: 1rem;
   background: #f1f5f9;
+  color: black;
   transition: border 0.2s;
 }
 .sgb-form input:focus {
@@ -287,6 +288,7 @@ body {
 }
 .sgb-livro-card {
   background: #fff;
+  color: black;
   border-radius: 6px 24px 24px 6px;
   box-shadow: 0 4px 16px rgba(99,102,241,0.10), 4px 0 0 #6366f1 inset;
   padding: 1.5rem 1.2rem 1.5rem 2.2rem;
@@ -354,12 +356,12 @@ body {
 .sgb-livro-nome {
   font-size: clamp(1rem, 2vw, 1.2rem);
   font-weight: 700;
-  color: #3b3b5c;
+  color: black;
   margin-left: 0.2rem;
 }
 .sgb-livro-autor {
   font-size: clamp(0.9rem, 1.7vw, 1rem);
-  color: #64748b;
+  color: black;
   margin-left: 0.2rem;
 }
 .sgb-livro-status {
@@ -392,6 +394,7 @@ body {
   border: 1px solid #cbd5e1;
   border-radius: 8px;
   font-size: 1rem;
+  color: black;
   background: #f1f5f9;
   min-width: 160px;
 }
@@ -486,7 +489,7 @@ body {
 }
 .sgb-modal-form h3 {
   margin: 0 0 0.5rem 0;
-  color: #3b3b5c;
+  color: black;
   font-size: 1.3rem;
   font-weight: 700;
 }
@@ -495,6 +498,7 @@ body {
   padding: 0.6rem 1rem;
   border: 1px solid #cbd5e1;
   border-radius: 8px;
+  color: black;
   font-size: 1rem;
   background: #f1f5f9;
 }
@@ -599,6 +603,7 @@ body {
 }
 .sgb-emprestimo-card {
   background: #fff;
+  color: black;
   border-radius: 6px 24px 24px 6px;
   box-shadow: 0 4px 16px rgba(99,102,241,0.10), 4px 0 0 #6366f1 inset;
   padding: 0.7rem 0.7rem 0.7rem 1.1rem;
@@ -746,4 +751,27 @@ body {
     width: 98vw;
     padding: 1rem 0.7rem 1rem 1.2rem;
   }
+}
+
+
+.sgb-genero-card{
+  background: #fff;
+  color: black;
+  border-radius: 6px 24px 24px 6px;
+  box-shadow: 0 4px 16px rgba(99,102,241,0.10), 4px 0 0 #6366f1 inset;
+  padding: 1.5rem 1.2rem 1.5rem 2.2rem;
+  min-width: 180px;
+  max-width: 220px;
+  width: 220px;
+  flex: 1 1 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: relative;
+  border-left: none;
+  margin-bottom: 0.5rem;
+  transition: transform 0.12s, box-shadow 0.12s;
+  opacity: 0;
+  transform: translateY(40px) scale(0.96);
+  animation: fadeInLivro 0.7s cubic-bezier(.4,0,.2,1) forwards;
 }

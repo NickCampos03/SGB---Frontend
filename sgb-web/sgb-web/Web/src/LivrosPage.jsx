@@ -144,12 +144,12 @@ export default function LivrosPage({ user, isAdminOrBiblio }) {
   // --- Modal de livro (edição/exclusão) ---
   function LivroModal({ livro, onClose, onUpdated, isAdminOrBiblio }) {
     const [editMode, setEditMode] = useState(false);
-    const [form, setForm] = useState({ nome: livro.nome, autor: livro.autor, genero: livro.genero?.id });
+    const [form, setForm] = useState({ nome: livro.nome, autor: livro.autor,   disponibilidade: livro.disponibilidade, genero: livro.genero?.id });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(livro._showSuccess ? 'Livro criado com sucesso!' : '');
 
-    useEffect(() => { setForm({ nome: livro.nome, autor: livro.autor, genero: livro.genero?.id }); }, [livro]);
+    useEffect(() => { setForm({ nome: livro.nome, autor: livro.autor,   disponibilidade: livro.disponibilidade, genero: livro.genero?.id }); }, [livro]);
 
     function handleChange(e) { setForm(f => ({ ...f, [e.target.name]: e.target.value })); }
 
@@ -160,7 +160,7 @@ export default function LivrosPage({ user, isAdminOrBiblio }) {
       fetch(`http://localhost:8080/livros/${livro.codigolivro}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` },
-        body: JSON.stringify({ nome: form.nome, autor: form.autor, genero: { id: Number(form.genero) } }),
+        body: JSON.stringify({ nome: form.nome, autor: form.autor, disponibilidade:form.disponibilidade, genero: { id: Number(form.genero) } }),
       })
         .then(res => res.json())
         .then(() => {
@@ -202,6 +202,16 @@ export default function LivrosPage({ user, isAdminOrBiblio }) {
             <option value="">Selecione o gênero</option>
             {generos.map(g => <option key={g.id} value={g.id}>{g.nome}</option>)}
           </select>
+        <select
+          name="disponibilidade"
+          value={form.disponibilidade || 'DISPONIVEL'}
+          onChange={handleChange}
+          disabled={!editMode}
+          required
+        >
+          <option value="DISPONIVEL">Disponível</option>
+          <option value="INDISPONIVEL">Indisponível</option>
+        </select>
           {error && <div className="sgb-error">{error}</div>}
           {success && <div className="sgb-success">{success}</div>}
           <div className="sgb-modal-actions">

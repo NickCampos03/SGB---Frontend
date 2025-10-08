@@ -30,26 +30,12 @@ export default function SideMenu({ perfil, selected, onSelect }) {
         >
           <FiList size={22} /> Empréstimos
         </button>
-        <button
-          className={selected === 'situação' ? 'sgb-menu-btn selected' : 'sgb-menu-btn'}
-          onClick={() => onSelect('situação')}
-        >
-          <FiCheck size={22} /> Consultar Situação
-        </button>
         {(perfil === 'ADMIN' || perfil === 'BIBLIOTECARIO') && (
           <button
             className={selected === 'usuarios' ? 'sgb-menu-btn selected' : 'sgb-menu-btn'}
             onClick={() => onSelect('usuarios')}
           >
             <FiUsers size={22} /> Usuários
-          </button>
-        )}
-        {(perfil === 'ADMIN' || perfil === 'BIBLIOTECARIO') && (
-          <button
-            className={selected === 'relatório' ? 'sgb-menu-btn selected' : 'sgb-menu-btn'}
-            onClick={() => onSelect('relatório')}
-          >
-            <FiTable size={22} /> Relatórios
           </button>
         )}
       </div>

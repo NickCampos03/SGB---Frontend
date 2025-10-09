@@ -9,7 +9,8 @@ export default function LivrosPage({ user, isAdminOrBiblio }) {
   const [generos, setGeneros] = useState([]);
   const [showCreate, setShowCreate] = useState(false);
   const [showLivro, setShowLivro] = useState(null);
-  const [livroCriadoMsg, setLivroCriadoMsg] = useState('');
+
+  
 
   // --- Buscar gêneros do backend ---
   useEffect(() => {

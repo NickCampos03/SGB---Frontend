@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import LivrosPage from './ManterLivros';
-import EmprestimosPage from './RealizarEmprestimo';
+import EmprestimosPage from './ManterEmprestimo';
 import UsuarioPage from './ManterUsuarios';
 import GeneroPage from './ManterGenero';
 
@@ -16,7 +16,7 @@ export default function MainContent({ selected, user, onLogout }) {
         <EmprestimosPage />
       )}
       {selected === 'usuarios' && <UsuarioPage user={user} />}
-      {selected === 'generos' && <GeneroPage />}
+      {selected === 'generos' && <GeneroPage user={user} isAdminOrBiblio={isAdminOrBiblio}/>}
       {selected === 'perfil' && (
         <div>
           <h2>Meu Perfil</h2>

@@ -12,7 +12,7 @@ export default function EmprestimosPage({ user }) {
 
   const perfil = user?.perfil || localStorage.getItem('perfil');
   const isUsuario = perfil === 'USUARIO';
-  const isAdminOrBiblio = perfil === 'ADMIN' || perfil === 'BIBLIOTECARIO';
+  
 
   // Buscar usuários
   useEffect(() => {
@@ -91,7 +91,7 @@ export default function EmprestimosPage({ user }) {
     <>
       <h2>Empréstimos</h2>
 
-      {isAdminOrBiblio && (
+      {(
         <button className="sgb-btn-criar-emprestimo" onClick={() => setShowNovoEmprestimo(true)}>
           + Novo Empréstimo
         </button>

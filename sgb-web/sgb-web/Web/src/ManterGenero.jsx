@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 export default function GeneroPage({ user, isAdminOrBiblio }) {
   const [generos, setGeneros] = useState([]);
@@ -77,33 +77,13 @@ export default function GeneroPage({ user, isAdminOrBiblio }) {
     return (
       <div className="sgb-modal-bg">
         <form className="sgb-modal-form" onSubmit={handleSubmit}>
-          <button
-            className="sgb-modal-close-x"
-            onClick={onClose}
-            type="button"
-            title="Fechar"
-          >
-            ×
-          </button>
-          <h3>Novo Gênero</h3>
-          <input
-            placeholder="Nome do gênero"
-            value={nome}
-            onChange={(e) => setNome(e.target.value)}
-            required
-          />
+          <button className="sgb-modal-close-x" onClick={onClose} type="button" title="Fechar">×</button>
+          <h3> + Novo Genero</h3>
+          <input placeholder="Nome do Genero" value={nome} onChange={e => setNome(e.target.value)} required />
           {error && <div className="sgb-error">{error}</div>}
           <div className="sgb-modal-actions">
-            <button
-              type="button"
-              className="sgb-btn-cancelar"
-              onClick={onClose}
-            >
-              Cancelar
-            </button>
-            <button type="submit" disabled={loading}>
-              {loading ? "Salvando..." : "Salvar"}
-            </button>
+            <button type="button" className="sgb-btn-cancelar" onClick={onClose}>Cancelar</button>
+            <button type="submit" disabled={loading}>{loading ? 'Salvando...' : 'Salvar'}</button>
           </div>
         </form>
       </div>
@@ -231,9 +211,7 @@ export default function GeneroPage({ user, isAdminOrBiblio }) {
     <>
       <h2>Gêneros</h2>
       <div className="sgb-livros-filtros">
-        {isAdminOrBiblio && (
-          <button onClick={() => setShowCreate(true)}>+ Criar Gênero</button>
-        )}
+        {isAdminOrBiblio && (<button onClick={() => setShowCreate(true)}>+ Criar Gênero</button>)}
         <input
           name="nome"
           placeholder="Filtrar por nome"
@@ -243,13 +221,7 @@ export default function GeneroPage({ user, isAdminOrBiblio }) {
       </div>
 
       {showCreate && (
-        <CriarGeneroForm
-          onClose={() => setShowCreate(false)}
-          onCreated={(data) => {
-            setShowGenero(data);
-            setShowCreate(false);
-          }}
-        />
+        <CriarGeneroForm onClose={() => setShowCreate(false)} onCreated={(data) => {setShowGenero(data); setShowCreate(false);}}/>
       )}
       {showGenero && (
         <GeneroModal

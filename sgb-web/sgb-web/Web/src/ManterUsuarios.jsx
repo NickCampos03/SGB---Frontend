@@ -78,7 +78,7 @@ export default function UsuarioPage({ user }) {
       {error && <p className="sgb-error">{error}</p>}
       <div className="sgb-emprestimos-list">
         {usuarios.map(u => (
-          <UsuarioCard key={u.codigologin} usuario={u} onClick={() => handleCardClick(u)} />
+          <UsuarioCard key={u.codigoLogin} usuario={u} onClick={() => handleCardClick(u)} />
         ))}
         {!loading && usuarios.length === 0 && !error && <p>Nenhum usuário encontrado.</p>}
       </div>
@@ -110,7 +110,7 @@ function UsuarioCard({ usuario, onClick }) {
     >
       <div>
         <div className="sgb-emprestimo-codigo" style={{ marginBottom: '0.5rem' }}>
-          Usuário #{usuario.codigologin}
+          Usuário #{usuario.codigoLogin}
         </div>
         <div><b>Nome:</b> {usuario.nome}</div>
         <div><b>Email:</b> {usuario.email}</div>
@@ -144,7 +144,7 @@ function UsuarioModal({ usuario, onClose, perfilLogado }) {
     e.preventDefault();
     setLoading(true);
     setError('');
-    fetch(`http://localhost:8080/usuarios/${usuario.codigologin}`, {
+    fetch(`http://localhost:8080/usuarios/${usuario.codigoLogin}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -171,7 +171,7 @@ function UsuarioModal({ usuario, onClose, perfilLogado }) {
   function handleExcluir() {
     if (!window.confirm('Tem certeza que deseja excluir este usuário?')) return;
     setLoading(true);
-    fetch(`http://localhost:8080/usuarios/${usuario.codigologin}`, {
+    fetch(`http://localhost:8080/usuarios/${usuario.codigoLogin}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
     })
@@ -202,7 +202,7 @@ function UsuarioModal({ usuario, onClose, perfilLogado }) {
     <div className="sgb-modal-bg">
       <form className="sgb-modal-form" onSubmit={handleSalvar}>
         <button className="sgb-modal-close-x" onClick={handleClose} type="button" title="Fechar">×</button>
-        <h3>Usuário #{usuario.codigologin}</h3>
+        <h3>Usuário #{usuario.codigoLogin}</h3>
 
         <label>Nome</label>
         <input type="text" name="nome" value={form.nome} onChange={handleChange} disabled={!editMode} />

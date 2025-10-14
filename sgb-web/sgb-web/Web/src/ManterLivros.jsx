@@ -75,7 +75,7 @@ export default function LivrosPage({ user, isAdminOrBiblio }) {
         onClick={onClick}
         style={isClickable ? { cursor: 'pointer' } : {}}
       >
-        <div className="sgb-livro-codigo">id: {livro.codigolivro}</div>
+        <div className="sgb-livro-codigo">id: {livro.codigoLivro}</div>
         <div className="sgb-livro-nome">{livro.nome}</div>
         <div className="sgb-livro-autor">Autor: {livro.autor}</div>
         <div className="sgb-livro-genero">Gênero: {formatGenero(livro.genero)}</div>
@@ -112,7 +112,7 @@ export default function LivrosPage({ user, isAdminOrBiblio }) {
       })
         .then(res => res.json())
         .then(data => {
-          if (data && data.codigolivro) {
+          if (data && data.codigoLivro) {
             data.disponibilidade = 'DISPONIVEL';
             onCreated(data);
           } else setError('Erro ao criar livro.');
@@ -158,7 +158,7 @@ export default function LivrosPage({ user, isAdminOrBiblio }) {
       e.preventDefault();
       setLoading(true);
       setError('');
-      fetch(`http://localhost:8080/livros/${livro.codigolivro}`, {
+      fetch(`http://localhost:8080/livros/${livro.codigoLivro}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` },
         body: JSON.stringify({ nome: form.nome, autor: form.autor, disponibilidade:form.disponibilidade, genero: { id: Number(form.genero) } }),
@@ -177,7 +177,7 @@ export default function LivrosPage({ user, isAdminOrBiblio }) {
     function handleDelete() {
       if (!window.confirm('Tem certeza que deseja excluir este livro?')) return;
       setLoading(true);
-      fetch(`http://localhost:8080/livros/${livro.codigolivro}`, {
+      fetch(`http://localhost:8080/livros/${livro.codigoLivro}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       })
@@ -196,7 +196,7 @@ export default function LivrosPage({ user, isAdminOrBiblio }) {
       <div className="sgb-modal-bg">
         <form className="sgb-modal-form" onSubmit={handleSave}>
           <button className="sgb-modal-close-x" onClick={onClose} type="button" title="Fechar">×</button>
-          <h3>Livro #{livro.codigolivro}</h3>
+          <h3>Livro #{livro.codigoLivro}</h3>
           <input name="nome" value={form.nome} onChange={handleChange} disabled={!editMode} required />
           <input name="autor" value={form.autor} onChange={handleChange} disabled={!editMode} required />
           <select name="genero" value={form.genero || ''} onChange={handleChange} disabled={!editMode} required>
@@ -249,7 +249,7 @@ export default function LivrosPage({ user, isAdminOrBiblio }) {
 
       <div className="sgb-livros-list">
         {livrosFiltrados.map(livro => (
-          <LivroCard key={livro.codigolivro} livro={livro} onClick={() => setShowLivro(livro)} isClickable={isAdminOrBiblio} />
+          <LivroCard key={livro.codigoLivro} livro={livro} onClick={() => setShowLivro(livro)} isClickable={isAdminOrBiblio} />
         ))}
         {!loading && livrosFiltrados.length === 0 && <p>Nenhum livro encontrado.</p>}
       </div>

@@ -58,9 +58,9 @@ export default function EmprestimosPage({ user }) {
     setLoading(true);
     setError('');
     const params = [];
-    if (filtros.emAtraso === 'true') params.push('em_atraso=true');
-    if (filtros.emAtraso === 'false') params.push('em_atraso=false');
-    if (filtros.emAtraso === 'entregue') params.push('entregue=true');
+    if (filtros.ematraso === 'true') params.push('em_atraso=true');
+    if (filtros.ematraso === 'false') params.push('em_atraso=false');
+    if (filtros.ematraso === 'entregue') params.push('entregue=true');
     if (filtros.usuario && !isUsuario) params.push(`usuario=${filtros.usuario}`);
     if (filtros.codLivro) params.push(`cod_livro=${filtros.codLivro}`);
     const query = params.length ? `?${params.join('&')}` : '';
@@ -214,8 +214,8 @@ function EmprestimoModal({ emprestimo, onClose }) {
         <button className="sgb-modal-close-x" onClick={() => onClose(atualizou)} type="button" title="Fechar">×</button>
         <h3>Empréstimo #{emprestimoAtual.codigoemprestimo}</h3>
         <div style={{marginBottom:'0.5rem'}}>
-          <b>Livro:</b> {emprestimoAtual.nomeLivro} #{emprestimoAtual.codLivro}<br/>
-          <b>Usuário:</b> {emprestimoAtual.nomeUsuario} #{emprestimoAtual.codUsuario}<br/>
+          <b>Livro:</b> {emprestimoAtual.livro.nome} #{emprestimoAtual.livro.codigoLivro}<br/>
+          <b>Usuário:</b> {emprestimoAtual.usuario.nome} #{emprestimoAtual.usuario.codigoLogin}<br/>
           <b>Retirada:</b> {formatDataBR(emprestimoAtual.dataDeRetirada)}<br/>
           <b>Prevista:</b> {formatDataBR(emprestimoAtual.dataPrevista)}<br/>
           <b>Entrega:</b> {editEntrega ? (
@@ -224,14 +224,20 @@ function EmprestimoModal({ emprestimo, onClose }) {
             formatDataBR(emprestimoAtual.dataDeEntrega)
           )}<br/>
           <div className="sgb-emprestimo-status-row">
-            {!Boolean(emprestimoAtual.dataDeEntrega) && emprestimoAtual.emAtraso && (
-              <span className="sgb-emprestimo-status-atraso">Em atraso ({emprestimoAtual.diasEmAtraso} dias)</span>
+            {!emprestimoAtual.dataDeEntrega && emprestimoAtual.emAtraso && (
+              <span className="sgb-emprestimo-status-atraso">Em atraso</span>
             )}
-            {!Boolean(emprestimoAtual.dataDeEntrega) && emprestimoAtual.saldoDevedor > 0 && (
-              <div className="sgb-emprestimo-saldo">Saldo devedor: R$ {emprestimoAtual.saldoDevedor.toFixed(2)}</div>
+
+            {emprestimo.emAtraso && (
+              <div className="sgb-emprestimo-saldo">
+                Saldo devedor: R$ {emprestimoAtual.valorDevendo.toFixed(2)}
+              </div>
             )}
-            {!emprestimoAtual.emAtraso && !Boolean(emprestimoAtual.dataDeEntrega) && <span className="sgb-emprestimo-tag-emdia">Em dia</span>}
-            {Boolean(emprestimoAtual.dataDeEntrega) && (
+
+            {!emprestimoAtual.emAtraso && !emprestimoAtual.dataDeEntrega && (
+              <span className="sgb-emprestimo-tag-emdia">Em dia</span>
+            )}
+            {emprestimoAtual.dataDeEntrega && (
               <div className="sgb-emprestimo-tag-entregue">Entregue</div>
             )}
           </div>
@@ -311,14 +317,14 @@ function NovoEmprestimoModal({ onClose, onSuccess, perfil }) {
             <label>Usuário</label>
             <select value={usuario} onChange={e => setUsuario(e.target.value)} required>
               <option value="">Selecione o usuário</option>
-              {usuarios.map(u => <option key={u.codigologin} value={u.codigologin}>{u.nome} #{u.codigologin}</option>)}
+              {usuarios.map(u => <option key={u.codigoLogin} value={u.codigoLogin}>{u.nome} #{u.codigoLogin}</option>)}
             </select>
           </>
         )}
         <label>Livro</label>
         <select value={livro} onChange={e => setLivro(e.target.value)} required>
           <option value="">Selecione o livro</option>
-          {livros.map(l => <option key={l.codigolivro} value={l.codigolivro}>{l.nome} #{l.codigolivro}</option>)}
+          {livros.map(l => <option key={l.codigoLivro} value={l.codigoLivro}>{l.nome} #{l.codigoLivro}</option>)}
         </select>
         {error && <div className="sgb-error">{error}</div>}
         {success && <div className="sgb-success">{success}</div>}
@@ -330,28 +336,60 @@ function NovoEmprestimoModal({ onClose, onSuccess, perfil }) {
 
 // ================== Card ==================
 function EmprestimoCard({ emprestimo, onClick, isClickable }) {
+  const hoje = new Date();
   const entregue = Boolean(emprestimo.dataDeEntrega);
   const emDia = !emprestimo.emAtraso && !entregue;
+
+  const valorDevendo = Number(emprestimo.valorDevendo || 0);
+
   return (
     <div
       className={`sgb-emprestimo-card${emprestimo.emAtraso ? ' sgb-emprestimo-atrasado' : ''}${isClickable ? ' sgb-emprestimo-card-clickable' : ''}`}
-      style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', cursor: isClickable ? 'pointer' : undefined }}
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        cursor: isClickable ? 'pointer' : undefined,
+      }}
       onClick={isClickable ? onClick : undefined}
       tabIndex={isClickable ? 0 : undefined}
     >
       <div>
-        <div className="sgb-emprestimo-codigo" style={{ marginBottom: '0.5rem' }}>Empréstimo #{emprestimo.codigoemprestimo}</div>
-        <div className="sgb-emprestimo-livro">Livro: <b>{emprestimo.nomeLivro} #{emprestimo.codLivro}</b></div>
-        <div className="sgb-emprestimo-usuario">Usuário: {emprestimo.nomeUsuario} #{emprestimo.codUsuario}</div>
+        <div className="sgb-emprestimo-codigo" style={{ marginBottom: '0.5rem' }}>
+          Empréstimo #{emprestimo.codigoEmprestimo}
+        </div>
+        <div className="sgb-emprestimo-livro">
+          Livro: <b>{emprestimo.livro.nome} #{emprestimo.livro.codigoLivro}</b>
+        </div>
+        <div className="sgb-emprestimo-usuario">
+          Usuário: {emprestimo.usuario.nome} #{emprestimo.usuario.codigoLogin}
+        </div>
         <div className="sgb-emprestimo-datas">
           <span>Retirada: {formatDataBR(emprestimo.dataDeRetirada)}</span>
           <span>Prevista: {formatDataBR(emprestimo.dataPrevista)}</span>
           <span>Entrega: {formatDataBR(emprestimo.dataDeEntrega)}</span>
         </div>
       </div>
+
       <div className="sgb-emprestimo-status-row">
-        {emprestimo.emAtraso && <span className="sgb-emprestimo-status-atraso">Em atraso ({emprestimo.diasEmAtraso} dias)</span>}
-        {emprestimo.saldoDevedor > 0 && <div className="sgb-emprestimo-saldo">Saldo devedor: R$ {emprestimo.saldoDevedor.toFixed(2)}</div>}
+        {emprestimo.emAtraso && (() => {
+          const dataPrevista = new Date(emprestimo.dataPrevista);
+          const diffMs = hoje - dataPrevista;
+          const diffDias = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+          return (
+            <span className="sgb-emprestimo-status-atraso">
+              Em atraso ({diffDias} dias)
+            </span>
+          );
+        })()}
+
+        {/*Mostra saldo devedor apenas se estiver em atraso */}
+        {emprestimo.emAtraso && (
+          <div className="sgb-emprestimo-saldo">
+            Saldo devedor: R$ {valorDevendo.toFixed(2)}
+          </div>
+        )}
+
         {emDia && <span className="sgb-emprestimo-tag-emdia">Em dia</span>}
         {entregue && <div className="sgb-emprestimo-tag-entregue">Entregue</div>}
       </div>

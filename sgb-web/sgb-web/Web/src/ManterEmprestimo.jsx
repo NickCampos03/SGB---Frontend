@@ -121,7 +121,7 @@ export default function EmprestimosPage({ user }) {
       <div className="sgb-emprestimos-list">
         {emprestimos.map(e => (
           <EmprestimoCard
-            key={e.codigoemprestimo}
+            key={e.codigoEmprestimo}
             emprestimo={e}
             onClick={() => handleCardClick(e)}
             isClickable={!isUsuario}
@@ -163,37 +163,46 @@ function EmprestimoModal({ emprestimo, onClose }) {
 
   function handleReceber() { setEditEntrega(true); }
 
-  function handleSalvar(e) {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    fetch(`http://localhost:8080/emprestimos/${emprestimoAtual.codigoemprestimo}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-      body: JSON.stringify({ datadeentrega: dataEntrega }),
-    })
-      .then(res => res.ok ? res.json() : Promise.reject(res))
-      .then(data => {
-        setSuccess('Empréstimo recebido com sucesso!');
-        setEmprestimoAtual({ ...emprestimoAtual, ...data, dataDeEntrega: dataEntrega });
-        setEditEntrega(false);
-        setAtualizou(true);
-      })
-      .catch(async err => {
-        let msg = 'Erro ao salvar entrega. ' + await err.text();
-        setError(msg);
-      })
-      .finally(() => setLoading(false));
-  }
+function handleSalvar(e) {
+  e.preventDefault();
+  setLoading(true);
+  setError('');
+  setSuccess('');
 
+  const body = { datadeentrega: dataEntrega };
+
+  fetch(`http://localhost:8080/emprestimos/${emprestimoAtual.codigoEmprestimo}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
+    body: JSON.stringify(body),
+  })
+    .then(res => res.ok ? res.json() : Promise.reject(res))
+    .then(data => {
+      setSuccess('Empréstimo recebido com sucesso!');
+      // força atualização local
+      setEmprestimoAtual(prev => ({
+        ...prev,
+        ...data,
+        dataDeEntrega: dataEntrega,
+        emAtraso: false // força mudança para entregue
+      }));
+      setEditEntrega(false);
+      setAtualizou(true);
+    })
+    .catch(async err => {
+      let msg = 'Erro ao salvar entrega. ' + await err.text();
+      setError(msg);
+    })
+    .finally(() => setLoading(false));
+}
   function handleExcluir() {
     if (!window.confirm('Tem certeza que deseja excluir este empréstimo?')) return;
     setLoading(true);
     setError('');
-    fetch(`http://localhost:8080/emprestimos/${emprestimoAtual.codigoemprestimo}`, {
+    fetch(`http://localhost:8080/emprestimos/${emprestimoAtual.codigoEmprestimo}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
     })
@@ -212,7 +221,7 @@ function EmprestimoModal({ emprestimo, onClose }) {
     <div className="sgb-modal-bg">
       <form className="sgb-modal-form" onSubmit={handleSalvar}>
         <button className="sgb-modal-close-x" onClick={() => onClose(atualizou)} type="button" title="Fechar">×</button>
-        <h3>Empréstimo #{emprestimoAtual.codigoemprestimo}</h3>
+        <h3>Empréstimo #{emprestimoAtual.codigoEmprestimo}</h3>
         <div style={{marginBottom:'0.5rem'}}>
           <b>Livro:</b> {emprestimoAtual.livro.nome} #{emprestimoAtual.livro.codigoLivro}<br/>
           <b>Usuário:</b> {emprestimoAtual.usuario.nome} #{emprestimoAtual.usuario.codigoLogin}<br/>
@@ -386,7 +395,7 @@ function EmprestimoCard({ emprestimo, onClick, isClickable }) {
         {/*Mostra saldo devedor apenas se estiver em atraso */}
         {emprestimo.emAtraso && (
           <div className="sgb-emprestimo-saldo">
-            Saldo devedor: R$ {valorDevendo.toFixed(2)}
+            Saldo devedor: R$ {emprestimo.valorDevendo.toFixed(2)}
           </div>
         )}
 

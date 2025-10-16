@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+<img src="/vite.svg" alt="Vite logo" />
 import './App.css'
 import Login from './RealizarLogin';
 import SideMenu from './SideMenu';

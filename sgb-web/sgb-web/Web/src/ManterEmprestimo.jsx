@@ -299,7 +299,7 @@ function NovoEmprestimoModal({ onClose, onSuccess, perfil }) {
 
     if (!livro || !usuario) { setError('Selecione o livro e o usuário.'); setLoading(false); return; }
 
-    const body = {livro: { codigolivro: Number(livro) }, usuario: { codigologin: Number(usuario) }, dataDeRetirada: dataRetirada, dataPrevista: dataPrevista};
+    const body = {livro: { codigoLivro: Number(livro) }, usuario: { codigoLogin: Number(usuario) }, dataDeRetirada: dataRetirada, dataPrevista: dataPrevista};
 
     fetch('/emprestimos', {
       method: 'POST',

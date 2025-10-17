@@ -14,7 +14,7 @@ export default function LivrosPage({ user, isAdminOrBiblio }) {
 
   // --- Buscar gêneros do backend ---
   useEffect(() => {
-    fetch('http://localhost:8080/generos', {
+    fetch('/generos', {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
     })
       .then(res => res.json())
@@ -33,7 +33,7 @@ export default function LivrosPage({ user, isAdminOrBiblio }) {
 
   const query = queryParams.toString() ? `?${queryParams.toString()}` : "";
 
-  fetch(`http://localhost:8080/livros${query}`, {
+  fetch(`/livros${query}`, {
     headers: {
       "Content-Type": "application/json",
       "Authorization": `Bearer ${localStorage.getItem('token')}`
@@ -102,7 +102,7 @@ export default function LivrosPage({ user, isAdminOrBiblio }) {
         return;
       }
       setLoading(true);
-      fetch('http://localhost:8080/livros', {
+      fetch('/livros', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -158,7 +158,7 @@ export default function LivrosPage({ user, isAdminOrBiblio }) {
       e.preventDefault();
       setLoading(true);
       setError('');
-      fetch(`http://localhost:8080/livros/${livro.codigoLivro}`, {
+      fetch(`/livros/${livro.codigoLivro}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` },
         body: JSON.stringify({ nome: form.nome, autor: form.autor, disponibilidade:form.disponibilidade, genero: { id: Number(form.genero) } }),
@@ -177,7 +177,7 @@ export default function LivrosPage({ user, isAdminOrBiblio }) {
     function handleDelete() {
       if (!window.confirm('Tem certeza que deseja excluir este livro?')) return;
       setLoading(true);
-      fetch(`http://localhost:8080/livros/${livro.codigoLivro}`, {
+      fetch(`/livros/${livro.codigoLivro}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       })

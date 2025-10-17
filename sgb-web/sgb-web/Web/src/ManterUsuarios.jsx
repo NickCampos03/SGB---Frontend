@@ -21,7 +21,7 @@ export default function UsuarioPage({ user }) {
   useEffect(() => {
     setLoading(true);
     setError('');
-    let url = 'http://localhost:8080/usuarios';
+    let url = '/usuarios';
     if (filtroPerfil) url += `?perfil=${filtroPerfil}`;
     fetch(url, {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
@@ -144,7 +144,7 @@ function UsuarioModal({ usuario, onClose, perfilLogado }) {
     e.preventDefault();
     setLoading(true);
     setError('');
-    fetch(`http://localhost:8080/usuarios/${usuario.codigoLogin}`, {
+    fetch(`/usuarios/${usuario.codigoLogin}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -171,7 +171,7 @@ function UsuarioModal({ usuario, onClose, perfilLogado }) {
   function handleExcluir() {
     if (!window.confirm('Tem certeza que deseja excluir este usuário?')) return;
     setLoading(true);
-    fetch(`http://localhost:8080/usuarios/${usuario.codigoLogin}`, {
+    fetch(`/usuarios/${usuario.codigoLogin}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
     })
@@ -281,7 +281,7 @@ function CriarUsuarioModal({ onClose, onCreated, isAdmin, isBiblio }) {
       return;
     }
     setLoading(true);
-    fetch('http://localhost:8080/usuarios', {
+    fetch('/usuarios', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

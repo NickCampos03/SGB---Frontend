@@ -11,7 +11,7 @@ export default function GeneroPage({ user, isAdminOrBiblio }) {
 
   // --- Buscar gêneros ---
   function buscarGeneros() {
-    fetch("http://localhost:8080/generos", {
+    fetch("/generos", {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     })
       .then((res) => {
@@ -56,7 +56,7 @@ export default function GeneroPage({ user, isAdminOrBiblio }) {
         return;
       }
       setLoading(true);
-      fetch("http://localhost:8080/generos", {
+      fetch("/generos", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -110,7 +110,7 @@ export default function GeneroPage({ user, isAdminOrBiblio }) {
       e.preventDefault();
       setLoading(true);
       setError("");
-      fetch(`http://localhost:8080/generos/${genero.id}`, {
+      fetch(`/generos/${genero.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -132,7 +132,7 @@ export default function GeneroPage({ user, isAdminOrBiblio }) {
     function handleDelete() {
       if (!window.confirm("Tem certeza que deseja excluir este gênero?")) return;
       setLoading(true);
-      fetch(`http://localhost:8080/generos/${genero.id}`, {
+      fetch(`/generos/${genero.id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })

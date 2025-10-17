@@ -17,7 +17,7 @@ export default function EmprestimosPage({ user }) {
   // Buscar usuários
   useEffect(() => {
     if (!isUsuario) {
-      fetch('http://localhost:8080/usuarios?perfil=USUARIO', {
+      fetch('/usuarios?perfil=USUARIO', {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       })
         .then(res => res.json())
@@ -28,7 +28,7 @@ export default function EmprestimosPage({ user }) {
 
   // Buscar livros para filtro e seleção
   useEffect(() => {
-    fetch('http://localhost:8080/emprestimos', {
+    fetch('/emprestimos', {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
     })
       .then(res => res.json())
@@ -64,7 +64,7 @@ export default function EmprestimosPage({ user }) {
     if (filtros.usuario && !isUsuario) params.push(`usuario=${filtros.usuario}`);
     if (filtros.codLivro) params.push(`cod_livro=${filtros.codLivro}`);
     const query = params.length ? `?${params.join('&')}` : '';
-    fetch(`http://localhost:8080/emprestimos${query}`, {
+    fetch(`/emprestimos${query}`, {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
     })
       .then(res => res.json())
@@ -107,12 +107,12 @@ export default function EmprestimosPage({ user }) {
         {!isUsuario && (
           <select name="usuario" value={filtros.usuario} onChange={handleFiltroChange} style={{ minWidth: 180 }}>
             <option value="">Selecione o usuário</option>
-            {usuarios.map(u => <option key={u.codigologin} value={u.codigologin}>{u.nome} #{u.codigologin}</option>)}
+            {usuarios.map(u => <option key={u.codigoLogin} value={u.codigoLogin}>{u.nome} #{u.codigoLogin}</option>)}
           </select>
         )}
         <select name="codLivro" value={filtros.codLivro} onChange={handleFiltroChange} style={{ minWidth: 180 }}>
           <option value="">Selecione o livro</option>
-          {livros.map(l => <option key={l.codLivro} value={l.codLivro}>{l.nomeLivro} #{l.codLivro}</option>)}
+          {livros.map(l => <option key={livros.codigoLivro} value={livros.codigoLivro}>{livros.nome} #{livros.codigoLivro}</option>)}
         </select>
       </div>
 
@@ -169,9 +169,9 @@ function handleSalvar(e) {
   setError('');
   setSuccess('');
 
-  const body = { datadeentrega: dataEntrega };
+  const body = { dataDeEntrega: dataEntrega };
 
-  fetch(`http://localhost:8080/emprestimos/${emprestimoAtual.codigoEmprestimo}`, {
+  fetch(`/emprestimos/${emprestimoAtual.codigoEmprestimo}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -202,7 +202,7 @@ function handleSalvar(e) {
     if (!window.confirm('Tem certeza que deseja excluir este empréstimo?')) return;
     setLoading(true);
     setError('');
-    fetch(`http://localhost:8080/emprestimos/${emprestimoAtual.codigoEmprestimo}`, {
+    fetch(`/emprestimos/${emprestimoAtual.codigoEmprestimo}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
     })
@@ -281,13 +281,13 @@ function NovoEmprestimoModal({ onClose, onSuccess, perfil }) {
   // Buscar usuários e livros
   useEffect(() => {
     if (!isUsuario) {
-      fetch('http://localhost:8080/usuarios?perfil=USUARIO', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } })
+      fetch('/usuarios?perfil=USUARIO', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } })
         .then(res => res.json())
         .then(data => setUsuarios(Array.isArray(data) ? data : []))
         .catch(() => setUsuarios([]));
     } else setUsuario(localStorage.getItem('userId'));
 
-    fetch('http://localhost:8080/livros?disponibilidade=DISPONIVEL', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } })
+    fetch('/livros?disponibilidade=DISPONIVEL', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } })
       .then(res => res.json())
       .then(data => setLivros(Array.isArray(data) ? data : []))
       .catch(() => setLivros([]));
@@ -299,9 +299,9 @@ function NovoEmprestimoModal({ onClose, onSuccess, perfil }) {
 
     if (!livro || !usuario) { setError('Selecione o livro e o usuário.'); setLoading(false); return; }
 
-    const body = {livro: { codigolivro: Number(livro) }, usuario: { codigologin: Number(usuario) }, dataderetirada: dataRetirada, dataprevista: dataPrevista};
+    const body = {livro: { codigolivro: Number(livro) }, usuario: { codigologin: Number(usuario) }, dataDeRetirada: dataRetirada, dataPrevista: dataPrevista};
 
-    fetch('http://localhost:8080/emprestimos', {
+    fetch('/emprestimos', {
       method: 'POST',
       headers: { 'Content-Type':'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` },
       body: JSON.stringify(body)

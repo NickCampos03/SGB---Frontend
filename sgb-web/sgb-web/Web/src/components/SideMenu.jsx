@@ -1,5 +1,5 @@
 import { FiBook, FiUsers, FiList, FiBookmark, FiCheck, FiChevronDown, FiTable } from 'react-icons/fi';
-import reactLogo from './assets/icons8-user-50.png';
+import reactLogo from '../assets/icons8-user-50.png';
 
 export default function SideMenu({ perfil, selected, onSelect }) {
   return (

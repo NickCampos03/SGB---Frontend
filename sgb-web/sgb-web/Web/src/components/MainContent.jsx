@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
-import LivrosPage from './ManterLivros';
-import EmprestimosPage from './ManterEmprestimo';
-import UsuarioPage from './ManterUsuarios';
-import GeneroPage from './ManterGenero';
+import { useEffect, useState } from "react";
+import LivrosPage from "../pages/Livros/ManterLivros";
+import EmprestimosPage from "../pages/Emprestimos/ManterEmprestimo";
+import UsuarioPage from "../pages/Usuarios/ManterUsuarios";
+import GeneroPage from '../pages/Genero/ManterGenero';
 
 export default function MainContent({ selected, user, onLogout }) {
   const isAdminOrBiblio = user?.perfil === 'ADMIN' || user?.perfil === 'BIBLIOTECARIO';

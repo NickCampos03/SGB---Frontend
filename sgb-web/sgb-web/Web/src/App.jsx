@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
 import reactLogo from './assets/react.svg'
 <img src="/vite.svg" alt="Vite logo" />
-import './App.css'
-import Login from './RealizarLogin';
-import SideMenu from './SideMenu';
-import MainContent from './MainContent';
+import './assets/App.css'
+import Login from './pages/Login/RealizarLogin';
+import SideMenu from './components/SideMenu';
+import MainContent from './components/MainContent';
 
 function App() {
   const [user, setUser] = useState(null);

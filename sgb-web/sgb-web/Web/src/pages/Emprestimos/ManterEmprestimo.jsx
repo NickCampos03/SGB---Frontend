@@ -4,7 +4,7 @@ export default function EmprestimosPage({ user }) {
   const [emprestimos, setEmprestimos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [filtros, setFiltros] = useState({ emAtraso: '', usuario: '', codLivro: '' });
+  const [filtros, setFiltros] = useState({ emAtraso: '', usuario: '', codigoLivro: '' });
   const [usuarios, setUsuarios] = useState([]);
   const [livros, setLivros] = useState([]);
   const [showModalEmprestimo, setShowModalEmprestimo] = useState(null);
@@ -37,10 +37,10 @@ export default function EmprestimosPage({ user }) {
           const livrosUnicos = [];
           const seen = new Set();
           data.forEach(e => {
-            const key = `${e.codLivro}|${e.nomeLivro}`;
+            const key = `${e.codigoLivro}|${e.livro.nome}`;
             if (!seen.has(key)) {
               seen.add(key);
-              livrosUnicos.push({ codLivro: e.codLivro, nomeLivro: e.nomeLivro });
+              livrosUnicos.push({ codigoLivro: e.codigoLivro, nomeLivro: e.livro.nome });
             }
           });
           setLivros(livrosUnicos);
@@ -58,11 +58,11 @@ export default function EmprestimosPage({ user }) {
     setLoading(true);
     setError('');
     const params = [];
-    if (filtros.ematraso === 'true') params.push('em_atraso=true');
-    if (filtros.ematraso === 'false') params.push('em_atraso=false');
-    if (filtros.ematraso === 'entregue') params.push('entregue=true');
+    if (filtros.emAtraso === 'true') params.push('em_atraso=true');
+    if (filtros.emAtraso === 'false') params.push('em_atraso=false');
+    if (filtros.emAtraso === 'entregue') params.push('entregue=true');
     if (filtros.usuario && !isUsuario) params.push(`usuario=${filtros.usuario}`);
-    if (filtros.codLivro) params.push(`cod_livro=${filtros.codLivro}`);
+    if (filtros.codigoLivro) params.push(`cod_livro=${filtros.codigoLivro}`);
     const query = params.length ? `?${params.join('&')}` : '';
     fetch(`/emprestimos${query}`, {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
@@ -110,7 +110,7 @@ export default function EmprestimosPage({ user }) {
             {usuarios.map(u => <option key={u.codigoLogin} value={u.codigoLogin}>{u.nome} #{u.codigoLogin}</option>)}
           </select>
         )}
-        <select name="codLivro" value={filtros.codLivro} onChange={handleFiltroChange} style={{ minWidth: 180 }}>
+        <select name="codLivro" value={filtros.codigoLivro} onChange={handleFiltroChange} style={{ minWidth: 180 }}>
           <option value="">Selecione o livro</option>
           {livros.map(l => <option key={livros.codigoLivro} value={livros.codigoLivro}>{livros.nome} #{livros.codigoLivro}</option>)}
         </select>
@@ -296,10 +296,20 @@ function NovoEmprestimoModal({ onClose, onSuccess, perfil }) {
   function handleSalvar(e) {
     e.preventDefault();
     setLoading(true); setError(''); setSuccess('');
+    const usuarioCodigo = Number(usuario);
+    const livroCodigo = Number(livro);
 
-    if (!livro || !usuario) { setError('Selecione o livro e o usuário.'); setLoading(false); return; }
-
-    const body = {livro: { codigoLivro: Number(livro) }, usuario: { codigoLogin: Number(usuario) }, dataDeRetirada: dataRetirada, dataPrevista: dataPrevista};
+    if (!usuarioCodigo || !livroCodigo) {
+      setError('Selecione o livro e o usuário.');
+      setLoading(false);
+      return;
+    }
+    const body = {
+      usuario: { codigoLogin: usuarioCodigo },
+      livro: { codigoLivro: livroCodigo },
+      dataRetirada,
+      dataPrevista      
+    };
 
     fetch('/emprestimos', {
       method: 'POST',

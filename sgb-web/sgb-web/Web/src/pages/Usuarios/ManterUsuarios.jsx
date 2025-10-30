@@ -217,7 +217,12 @@ function UsuarioModal({ usuario, onClose, perfilLogado }) {
         <input type="number" name="idade" value={form.idade} onChange={handleChange} disabled={!editMode} />
 
         <label>Perfil</label>
-        <input type="text" name="perfil" value={form.perfil} disabled />
+        <select name="perfil" value={form.perfil} onChange={handleChange} disabled={!editMode}>
+          <option value="">Selecione o perfil</option>
+          <option value="USUARIO">USUARIOo</option>
+          <option value="ADMIN">ADMIN</option>
+          <option value="BIBLIOTECARIO">BIBLIOTECARIO</option>
+        </select>
 
         {error && <div className="sgb-error">{error}</div>}
         {success && <div className="sgb-success">{success}</div>}

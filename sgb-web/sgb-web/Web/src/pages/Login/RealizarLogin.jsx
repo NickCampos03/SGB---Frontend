@@ -53,5 +53,5 @@ export default function Login({ onLogin }) {
       {error && <div className="sgb-error">{error}</div>}
     </form>
   );
-
+  
 }

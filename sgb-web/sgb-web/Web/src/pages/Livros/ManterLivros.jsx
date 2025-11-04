@@ -216,9 +216,9 @@ export default function LivrosPage({ user, isAdminOrBiblio }) {
           {error && <div className="sgb-error">{error}</div>}
           {success && <div className="sgb-success">{success}</div>}
           <div className="sgb-modal-actions">
-            {isAdminOrBiblio && !editMode && <button type="button" onClick={() => setEditMode(true)}>Editar</button>}
+            {isAdminOrBiblio && !editMode && <button className = 'sgb-btn-editar' type="button" onClick={() => setEditMode(true)}>Editar</button>}
             {isAdminOrBiblio && editMode && <button type="submit" disabled={loading}>{loading ? 'Salvando...' : 'Salvar'}</button>}
-            {isAdminOrBiblio && <button type="button" onClick={handleDelete}>Excluir</button>}
+            {isAdminOrBiblio && <button className = 'sgb-btn-excluir' type="button" onClick={handleDelete}>Excluir</button>}
           </div>
         </form>
       </div>
@@ -229,7 +229,7 @@ export default function LivrosPage({ user, isAdminOrBiblio }) {
     <>
       <h2>Livros</h2>
       <div className="sgb-livros-filtros">
-        {isAdminOrBiblio && <button onClick={() => setShowCreate(true)}>+ Criar Livro</button>}
+        {isAdminOrBiblio && <button className = "sgb-btn-criar-livro"onClick={() => setShowCreate(true)}>+ Criar Livro</button>}
         <input name="nome" placeholder="Filtrar por nome" value={filtros.nome} onChange={handleFiltroChange} />
         <input name="autor" placeholder="Filtrar por autor" value={filtros.autor} onChange={handleFiltroChange} />
         <select name="genero" value={filtros.genero} onChange={handleFiltroChange}>

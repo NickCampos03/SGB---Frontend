@@ -37,10 +37,10 @@ export default function EmprestimosPage({ user }) {
           const livrosUnicos = [];
           const seen = new Set();
           data.forEach(e => {
-            const key = `${e.codigoLivro}|${e.livro.nome}`;
+            const key = `${e.livro.codigoLivro}|${e.livro.nome}`;
             if (!seen.has(key)) {
               seen.add(key);
-              livrosUnicos.push({ codigoLivro: e.codigoLivro, nomeLivro: e.livro.nome });
+              livrosUnicos.push({codigoLivro: e.livro.codigoLivro, nomeLivro: e.livro.nome });
             }
           });
           setLivros(livrosUnicos);
@@ -54,24 +54,35 @@ export default function EmprestimosPage({ user }) {
     buscarEmprestimos();
   }, [filtros, isUsuario]);
 
-  function buscarEmprestimos() {
-    setLoading(true);
-    setError('');
-    const params = [];
-    if (filtros.emAtraso === 'true') params.push('em_atraso=true');
-    if (filtros.emAtraso === 'false') params.push('em_atraso=false');
-    if (filtros.emAtraso === 'entregue') params.push('entregue=true');
-    if (filtros.usuario && !isUsuario) params.push(`usuario=${filtros.usuario}`);
-    if (filtros.codigoLivro) params.push(`cod_livro=${filtros.codigoLivro}`);
-    const query = params.length ? `?${params.join('&')}` : '';
-    fetch(`/emprestimos${query}`, {
-      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-    })
-      .then(res => res.json())
-      .then(data => setEmprestimos(Array.isArray(data) ? data : []))
-      .catch(() => setError('Erro ao buscar empréstimos.'))
-      .finally(() => setLoading(false));
+function buscarEmprestimos() {
+  setLoading(true);
+  setError('');
+  const params = [];
+
+  if (filtros.emAtraso === 'true') params.push('em_atraso=true');
+  if (filtros.emAtraso === 'false') params.push('em_atraso=false');
+  if (filtros.emAtraso === 'entregue') params.push('entregue=true');
+
+  if (filtros.usuario && !isUsuario) {
+    params.push(`usuario=${filtros.usuario}`);
   }
+
+  if (filtros.codigoLivro) {
+    params.push(`codigoLivro=${filtros.codigoLivro}`);
+  }
+
+  const query = params.length ? `?${params.join('&')}` : '';
+
+  fetch(`/emprestimos${query}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+  })
+    .then(res => res.json())
+    .then(data => setEmprestimos(Array.isArray(data) ? data : []))
+    .catch(() => setError('Erro ao buscar empréstimos.'))
+    .finally(() => setLoading(false));
+}
+
+
 
   function handleFiltroChange(e) {
     const { name, value } = e.target;
@@ -105,14 +116,14 @@ export default function EmprestimosPage({ user }) {
           <option value="entregue">Entregue</option>
         </select>
         {!isUsuario && (
-          <select name="usuario" value={filtros.usuario} onChange={handleFiltroChange} style={{ minWidth: 180 }}>
+          <select name="usuario" value={filtros.codigoLogin} onChange={handleFiltroChange} style={{ minWidth: 180 }}>
             <option value="">Selecione o usuário</option>
             {usuarios.map(u => <option key={u.codigoLogin} value={u.codigoLogin}>{u.nome} #{u.codigoLogin}</option>)}
           </select>
         )}
-        <select name="codLivro" value={filtros.codigoLivro} onChange={handleFiltroChange} style={{ minWidth: 180 }}>
+        <select name="codigoLivro" value={filtros.codigoLivro} onChange={handleFiltroChange} style={{ minWidth: 180 }}>
           <option value="">Selecione o livro</option>
-          {livros.map(l => <option key={livros.codigoLivro} value={livros.codigoLivro}>{livros.nome} #{livros.codigoLivro}</option>)}
+          {livros.map(l => (<option key={l.codigoLivro} value={l.codigoLivro}>{l.nomeLivro} #{l.codigoLivro}</option>))}
         </select>
       </div>
 
@@ -237,7 +248,7 @@ function handleSalvar(e) {
               <span className="sgb-emprestimo-status-atraso">Em atraso</span>
             )}
 
-            {emprestimo.emAtraso && (
+            {emprestimo.emAtraso && !entregue && (
               <div className="sgb-emprestimo-saldo">
                 Saldo devedor: R$ {emprestimoAtual.valorDevendo.toFixed(2)}
               </div>
@@ -391,7 +402,7 @@ function EmprestimoCard({ emprestimo, onClick, isClickable }) {
       </div>
 
       <div className="sgb-emprestimo-status-row">
-        {emprestimo.emAtraso && (() => {
+        {emprestimo.emAtraso && !entregue && (() => {
           const dataPrevista = new Date(emprestimo.dataPrevista);
           const diffMs = hoje - dataPrevista;
           const diffDias = Math.floor(diffMs / (1000 * 60 * 60 * 24));
@@ -402,8 +413,7 @@ function EmprestimoCard({ emprestimo, onClick, isClickable }) {
           );
         })()}
 
-        {/*Mostra saldo devedor apenas se estiver em atraso */}
-        {emprestimo.emAtraso && (
+        {emprestimo.emAtraso && !entregue && (
           <div className="sgb-emprestimo-saldo">
             Saldo devedor: R$ {emprestimo.valorDevendo.toFixed(2)}
           </div>

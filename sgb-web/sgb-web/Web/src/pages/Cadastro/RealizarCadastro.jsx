@@ -24,7 +24,7 @@ export default function RealizarCadastro() {
     setError("");
     setSuccess(false);
 
-    if (!form.nome || !form.email || !form.telefone || !form.idade || !form.senha) {
+    if (!form.nome || !form.email || !form.telefone || !form.dataDeNascimento || !form.senha) {
       setError("Preencha todos os campos obrigatórios.");
       return;
     }

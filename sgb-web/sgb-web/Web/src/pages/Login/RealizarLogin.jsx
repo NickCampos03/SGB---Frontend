@@ -1,12 +1,24 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import {VscEye, VscEyeClosed } from "react-icons/vsc"
 
 export default function RealizarLogin({ onLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  //const [eyisClosed, setEyeState] = useState(false);
 
+  //const toggleShow = () => {
+  // if(inputRef.current.type === "password"){
+  //    setEyeState(true)
+  //    inputRef.current.type = "text";
+  //  }
+  //  else{
+  //    setEyeState(false)
+  //    inputRef.current.type = "password";
+  //  }
+  //}
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -51,6 +63,7 @@ export default function RealizarLogin({ onLogin }) {
         onChange={(e) => setPassword(e.target.value)}
         required
       />
+      
 
       <button type="submit" disabled={loading}>
         {loading ? "Entrando..." : "Entrar"}

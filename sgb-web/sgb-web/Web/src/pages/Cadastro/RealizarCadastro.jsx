@@ -42,9 +42,10 @@ export default function RealizarCadastro() {
             nome: form.nome,
             email: form.email,
             senha: form.senha,
-            idade: form.idade,
+            dataDeNascimento: form.dataDeNascimento,
             telefone: form.telefone,
             }),
+            
       });
 
       if (response.ok) {
@@ -53,7 +54,7 @@ export default function RealizarCadastro() {
           nome: "",
           email: "",
           telefone: "",
-          idade: "",
+          dataDeNascimento: "",
           senha: "",
         });
       } else {
@@ -100,11 +101,11 @@ export default function RealizarCadastro() {
         />
 
         <input
-          type="number"
-          name="idade"
-          placeholder="Idade"
-          value={form.idade}
+          type="date"
+          name="dataDeNascimento"
+          value={form.dataDeNascimento ? form.dataDeNascimento.split('T')[0] : ''}
           onChange={handleChange}
+          disabled={!editMode}
           required
         />
 

@@ -29,7 +29,6 @@ export default function UsuarioPage({ user }) {
       .then(res => res.json())
       .then(data => {
         let lista = Array.isArray(data) ? data : [];
-        // 🔒 Filtra: bibliotecário NÃO vê admins
         if (isBiblio) {
           lista = lista.filter(u => u.perfil !== 'ADMIN');
         }
@@ -115,7 +114,7 @@ function UsuarioCard({ usuario, onClick }) {
         <div><b>Nome:</b> {usuario.nome}</div>
         <div><b>Email:</b> {usuario.email}</div>
         <div><b>Telefone:</b> {usuario.telefone}</div>
-        <div><b>Idade:</b> {usuario.idade}</div>
+        <div><b>Data de Nascimento:</b> {usuario.dataDeNascimento}</div>
         <div><b>Perfil:</b> {usuario.perfil}</div>
       </div>
     </div>
@@ -154,7 +153,7 @@ function UsuarioModal({ usuario, onClose, perfilLogado }) {
         nome: form.nome,
         email: form.email,
         telefone: form.telefone,
-        idade: form.idade,
+        dataDeNascimento: form.dataDeNascimento,
         perfil: form.perfil,
       }),
     })
@@ -194,7 +193,6 @@ function UsuarioModal({ usuario, onClose, perfilLogado }) {
     onClose(atualizou);
   }
 
-  // 🔒 Regras de permissão:
   const podeEditar = isAdmin || (isBiblio && usuario.perfil === 'USUARIO');
   const podeExcluir = isAdmin || (isBiblio && usuario.perfil === 'USUARIO');
 
@@ -213,8 +211,14 @@ function UsuarioModal({ usuario, onClose, perfilLogado }) {
         <label>Telefone</label>
         <input type="text" name="telefone" value={form.telefone} onChange={handleChange} disabled={!editMode} />
 
-        <label>Idade</label>
-        <input type="number" name="idade" value={form.idade} onChange={handleChange} disabled={!editMode} />
+        <label>Data de Nascimento</label>
+        <input
+          type="date"
+          name="dataDeNascimento"
+          value={form.dataDeNascimento ? form.dataDeNascimento.split('T')[0] : ''}
+          onChange={handleChange}
+          disabled={!editMode}
+        />
 
         <label>Perfil</label>
         <select name="perfil" value={form.perfil} onChange={handleChange} disabled={!editMode}>
@@ -261,7 +265,7 @@ function CriarUsuarioModal({ onClose, onCreated, isAdmin, isBiblio }) {
     nome: '',
     email: '',
     telefone: '',
-    idade: '',
+    dataDeNascimento: '',
     perfil: isBiblio ? 'USUARIO' : '',
     senha: '',
     senha2: '',
@@ -276,7 +280,7 @@ function CriarUsuarioModal({ onClose, onCreated, isAdmin, isBiblio }) {
   function handleSubmit(e) {
     e.preventDefault();
     setError('');
-    if (!form.nome || !form.email || !form.telefone || !form.idade || !form.senha || !form.senha2) {
+    if (!form.nome || !form.email || !form.telefone || !form.dataDeNascimento || !form.senha || !form.senha2) {
       setError('Preencha todos os campos.');
       return;
     }
@@ -295,7 +299,7 @@ function CriarUsuarioModal({ onClose, onCreated, isAdmin, isBiblio }) {
         nome: form.nome,
         email: form.email,
         telefone: form.telefone,
-        idade: form.idade,
+        dataDeNascimento: form.dataDeNascimento,
         perfil: isBiblio ? 'USUARIO' : form.perfil,
         senha: form.senha,
       }),
@@ -317,7 +321,7 @@ function CriarUsuarioModal({ onClose, onCreated, isAdmin, isBiblio }) {
         <input type="text" name="nome" placeholder="Nome" value={form.nome} onChange={handleChange} required />
         <input type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange} required />
         <input type="text" name="telefone" placeholder="Telefone" value={form.telefone} onChange={handleChange} required />
-        <input type="number" name="idade" placeholder="Idade" value={form.idade} onChange={handleChange} required />
+        <input type="date" name="dataNascimento" placeholder="Data de Nascimento" value={form.dataDeNascimento} onChange={handleChange} required />
 
         {isAdmin ? (
           <select name="perfil" value={form.perfil} onChange={handleChange} required>

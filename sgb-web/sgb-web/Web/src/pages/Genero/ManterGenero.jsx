@@ -78,7 +78,7 @@ export default function GeneroPage({ user, isAdminOrBiblio }) {
       <div className="sgb-modal-bg">
         <form className="sgb-modal-form" onSubmit={handleSubmit}>
           <button className="sgb-modal-close-x" onClick={onClose} type="button" title="Fechar">×</button>
-          <h3> + Novo Genero</h3>
+          <h3> Novo Genero</h3>
           <input placeholder="Nome do Genero" value={nome} onChange={e => setNome(e.target.value)} required />
           {error && <div className="sgb-error">{error}</div>}
           <div className="sgb-modal-actions">
@@ -173,7 +173,7 @@ export default function GeneroPage({ user, isAdminOrBiblio }) {
           {success && <div className="sgb-success">{success}</div>}
           <div className="sgb-modal-actions">
             {isAdminOrBiblio && !editMode && (
-              <button type="button" onClick={() => setEditMode(true)}>
+              <button className = 'sgb-btn-editar'type="button" onClick={() => setEditMode(true)}>
                 Editar
               </button>
             )}
@@ -183,7 +183,7 @@ export default function GeneroPage({ user, isAdminOrBiblio }) {
               </button>
             )}
             {isAdminOrBiblio && (
-              <button type="button" onClick={handleDelete}>
+              <button className = 'sgb-btn-excluir'type="button" onClick={handleDelete}>
                 Excluir
               </button>
             )}
@@ -197,8 +197,7 @@ export default function GeneroPage({ user, isAdminOrBiblio }) {
   function GeneroCard({ genero, onClick, isClickable }) {
     return (
       <div
-        className={`sgb-genero-card${isClickable ? " sgb-card-clickable" : ""}`}
-        style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', cursor: isClickable ? 'pointer' : undefined }}
+        className={`sgb-livro-card${isClickable ? " sgb-card-clickable" : ""}`}
         onClick={onClick}
       >
         <p className="sgb-id">#{genero.id}</p>
@@ -211,7 +210,9 @@ export default function GeneroPage({ user, isAdminOrBiblio }) {
     <>
       <h2>Gêneros</h2>
       <div className="sgb-livros-filtros">
-        {isAdminOrBiblio && (<button onClick={() => setShowCreate(true)}>+ Criar Gênero</button>)}
+        {isAdminOrBiblio && (<button className="sgb-btn-criar-emprestimo" onClick={() => setShowCreate(true)}>
+          + Novo Genero
+        </button>)}
         <input
           name="nome"
           placeholder="Filtrar por nome"
@@ -233,7 +234,7 @@ export default function GeneroPage({ user, isAdminOrBiblio }) {
       )}
       {error && <p className="sgb-error">{error}</p>}
 
-      <div className="sgb-list">
+      <div className="sgb-livros-list">
         {generosFiltrados.map((genero) => (
           <GeneroCard
             key={genero.id}

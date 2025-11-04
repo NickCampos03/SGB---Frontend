@@ -219,7 +219,7 @@ function UsuarioModal({ usuario, onClose, perfilLogado }) {
         <label>Perfil</label>
         <select name="perfil" value={form.perfil} onChange={handleChange} disabled={!editMode}>
           <option value="">Selecione o perfil</option>
-          <option value="USUARIO">USUARIOo</option>
+          <option value="USUARIO">USUARIO</option>
           <option value="ADMIN">ADMIN</option>
           <option value="BIBLIOTECARIO">BIBLIOTECARIO</option>
         </select>
@@ -244,7 +244,6 @@ function UsuarioModal({ usuario, onClose, perfilLogado }) {
             <button
               type="button"
               className="sgb-btn-excluir"
-              style={{ backgroundColor: '#e53935', color: 'white' }}
               onClick={handleExcluir}
               disabled={loading}
             >

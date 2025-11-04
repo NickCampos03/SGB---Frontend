@@ -792,3 +792,21 @@ body {
   margin-left: 0.2rem;
 }
 
+.sgb-cadastro{
+  color:#888 ;
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  font-weight: 700;
+}
+.sgb-btn-criar-emprestimo{
+    background: linear-gradient(90deg, #6366f1 60%, #818cf8 100%);
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-right: 1.5rem;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(99,102,241,0.08);
+}

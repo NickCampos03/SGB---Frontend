@@ -6,7 +6,7 @@ export default function RealizarCadastro() {
     nome: "",
     email: "",
     telefone: "",
-    idade: "",
+    dataDeNascimento: "",
     senha: "",
   });
 
@@ -103,9 +103,8 @@ export default function RealizarCadastro() {
         <input
           type="date"
           name="dataDeNascimento"
-          value={form.dataDeNascimento ? form.dataDeNascimento.split('T')[0] : ''}
+          value={form.dataDeNascimento}
           onChange={handleChange}
-          disabled={!editMode}
           required
         />
 

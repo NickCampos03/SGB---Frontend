@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import EmprestimosPage from '../Emprestimos/ManterEmprestimo';
 
 export default function LivrosPage({ user, isAdminOrBiblio }) {
   const [livros, setLivros] = useState([]);
@@ -219,6 +220,7 @@ export default function LivrosPage({ user, isAdminOrBiblio }) {
             {isAdminOrBiblio && !editMode && <button className = 'sgb-btn-editar' type="button" onClick={() => setEditMode(true)}>Editar</button>}
             {isAdminOrBiblio && editMode && <button type="submit" disabled={loading}>{loading ? 'Salvando...' : 'Salvar'}</button>}
             {isAdminOrBiblio && <button className = 'sgb-btn-excluir' type="button" onClick={handleDelete}>Excluir</button>}
+            {form.disponibilidade!= "INDISPONIVEL" && <button type="submit" className="sgb-btn-emprestar" onClick={EmprestimosPage.handleSalvar(l)}disabled={loading}>{loading ? 'Emprestando...' : 'Emprestar'}</button>}
           </div>
         </form>
       </div>

@@ -221,13 +221,26 @@ function UsuarioModal({ usuario, onClose, perfilLogado }) {
         />
 
         <label>Perfil</label>
-        <select name="perfil" value={form.perfil} onChange={handleChange} disabled={!editMode}>
-          <option value="">Selecione o perfil</option>
-          <option value="USUARIO">USUARIO</option>
-          <option value="ADMIN">ADMIN</option>
-          <option value="BIBLIOTECARIO">BIBLIOTECARIO</option>
-        </select>
-
+        {isAdmin ? (
+          <select
+            name="perfil"
+            value={form.perfil}
+            onChange={handleChange}
+            disabled={!editMode}
+          >
+            <option value="">Selecione o perfil</option>
+            <option value="USUARIO">USUARIO</option>
+            <option value="ADMIN">ADMIN</option>
+            <option value="BIBLIOTECARIO">BIBLIOTECARIO</option>
+          </select>
+        ) : (
+          <input
+            type="text"
+            name="perfil"
+            value={form.perfil}
+            disabled
+          />
+        )}
         {error && <div className="sgb-error">{error}</div>}
         {success && <div className="sgb-success">{success}</div>}
 
@@ -320,7 +333,7 @@ function CriarUsuarioModal({ onClose, onCreated, isAdmin, isBiblio }) {
 
         <input type="text" name="nome" placeholder="Nome" value={form.nome} onChange={handleChange} required />
         <input type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange} required />
-        <input type="text" name="telefone" placeholder="Telefone" value={form.telefone} onChange={handleChange} maxLength="11" required />
+        <input type="text" name="telefone" placeholder="Telefone" value={form.telefone} onChange={handleChange} maxLength="11" required minLength= "11"/>
         <input type="date" name="dataNascimento" placeholder="Data de Nascimento" value={form.dataDeNascimento} onChange={handleChange} required />
 
         {isAdmin ? (
@@ -335,7 +348,6 @@ function CriarUsuarioModal({ onClose, onCreated, isAdmin, isBiblio }) {
         )}
 
         <input type="password" name="senha" placeholder="Senha" value={form.senha} onChange={handleChange} required />
-        <input type="password" name="senha2" placeholder="Confirmar senha" value={form.senha2} onChange={handleChange} required />
 
         {error && <div className="sgb-error">{error}</div>}
         <div className="sgb-modal-actions">

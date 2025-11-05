@@ -98,6 +98,7 @@ export default function RealizarCadastro() {
           value={form.telefone}
           onChange={handleChange}
           maxLength="11"
+          minLength= "11"
           required
         />
 

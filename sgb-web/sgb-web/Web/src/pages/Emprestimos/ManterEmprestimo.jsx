@@ -59,8 +59,8 @@ function buscarEmprestimos() {
   setError('');
   const params = [];
 
-  if (filtros.emAtraso === 'true') params.push('em_atraso=true');
-  if (filtros.emAtraso === 'false') params.push('em_atraso=false');
+  if (filtros.emAtraso === 'true') params.push('emAtraso=true');
+  if (filtros.emAtraso === 'false') params.push('emAtraso=false');
   if (filtros.emAtraso === 'entregue') params.push('entregue=true');
 
   if (filtros.usuario && !isUsuario) {

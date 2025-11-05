@@ -114,7 +114,7 @@ function UsuarioCard({ usuario, onClick }) {
         <div><b>Nome:</b> {usuario.nome}</div>
         <div><b>Email:</b> {usuario.email}</div>
         <div><b>Telefone:</b> {usuario.telefone}</div>
-        <div><b>Data de Nascimento:</b> {usuario.dataDeNascimento}</div>
+        <div><b>Data de Nascimento:</b><br></br>{usuario.dataDeNascimento}</div>
         <div><b>Perfil:</b> {usuario.perfil}</div>
       </div>
     </div>
@@ -320,7 +320,7 @@ function CriarUsuarioModal({ onClose, onCreated, isAdmin, isBiblio }) {
 
         <input type="text" name="nome" placeholder="Nome" value={form.nome} onChange={handleChange} required />
         <input type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange} required />
-        <input type="text" name="telefone" placeholder="Telefone" value={form.telefone} onChange={handleChange} required />
+        <input type="text" name="telefone" placeholder="Telefone" value={form.telefone} onChange={handleChange} maxLength="11" required />
         <input type="date" name="dataNascimento" placeholder="Data de Nascimento" value={form.dataDeNascimento} onChange={handleChange} required />
 
         {isAdmin ? (

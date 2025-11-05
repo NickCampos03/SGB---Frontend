@@ -101,13 +101,6 @@ function buscarEmprestimos() {
   return (
     <>
       <h2>Empréstimos</h2>
-
-      {(
-        <button className="sgb-btn-criar-emprestimo" onClick={() => setShowNovoEmprestimo(true)}>
-          + Novo Empréstimo
-        </button>
-      )}
-
       <div className="sgb-livros-filtros" style={{ marginBottom: '1.5rem' }}>
         <select name="emAtraso" value={filtros.emAtraso} onChange={handleFiltroChange} style={{ minWidth: 140 }}>
           <option value="">Todos</option>
@@ -275,7 +268,7 @@ function handleSalvar(e) {
 }
 
 // ================== Modal de Novo Empréstimo ==================
-function NovoEmprestimoModal({ onClose, onSuccess, perfil }) {
+function NovoEmprestimoModal({ onClose, onSuccess, perfil, livroSelecionado }) {
   const [usuarios, setUsuarios] = useState([]);
   const [livros, setLivros] = useState([]);
   const [usuario, setUsuario] = useState('');
@@ -289,20 +282,32 @@ function NovoEmprestimoModal({ onClose, onSuccess, perfil }) {
   const dataRetirada = hoje.toISOString().slice(0, 10);
   const dataPrevista = new Date(hoje.getTime() + 14*24*60*60*1000).toISOString().slice(0,10);
 
-  // Buscar usuários e livros
-  useEffect(() => {
-    if (!isUsuario) {
-      fetch('/usuarios?perfil=USUARIO', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } })
-        .then(res => res.json())
-        .then(data => setUsuarios(Array.isArray(data) ? data : []))
-        .catch(() => setUsuarios([]));
-    } else setUsuario(localStorage.getItem('userId'));
+    useEffect(() => {
+      if (!isUsuario) {
+        fetch('/usuarios?perfil=USUARIO', {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        })
+          .then(res => res.json())
+          .then(data => setUsuarios(Array.isArray(data) ? data : []))
+          .catch(() => setUsuarios([]));
+      } else {
+        // Se for usuário comum, define ele mesmo no campo
+        setUsuario(localStorage.getItem('userId'));
+      }
 
-    fetch('/livros?disponibilidade=DISPONIVEL', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } })
-      .then(res => res.json())
-      .then(data => setLivros(Array.isArray(data) ? data : []))
-      .catch(() => setLivros([]));
-  }, [isUsuario]);
+      fetch('/livros?disponibilidade=DISPONIVEL', {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      })
+        .then(res => res.json())
+        .then(data => setLivros(Array.isArray(data) ? data : []))
+        .catch(() => setLivros([]));
+    }, [isUsuario]);
+
+    useEffect(() => {
+      if (livroSelecionado) {
+        setLivro(livroSelecionado.codigoLivro);
+      }
+    }, [livroSelecionado]);
 
   function handleSalvar(e) {
     e.preventDefault();
@@ -370,7 +375,6 @@ function EmprestimoCard({ emprestimo, onClick, isClickable }) {
   const entregue = Boolean(emprestimo.dataDeEntrega);
   const emDia = !emprestimo.emAtraso && !entregue;
 
-  const valorDevendo = Number(emprestimo.valorDevendo || 0);
 
   return (
     <div
@@ -432,3 +436,4 @@ function formatDataBR(data) {
   if (isNaN(d)) return data;
   return d.toLocaleDateString('pt-BR');
 }
+export { NovoEmprestimoModal };

@@ -97,6 +97,7 @@ export default function RealizarCadastro() {
           placeholder="Telefone"
           value={form.telefone}
           onChange={handleChange}
+          maxLength="11"
           required
         />
 

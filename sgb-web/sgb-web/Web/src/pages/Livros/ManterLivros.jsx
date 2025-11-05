@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import EmprestimosPage from '../Emprestimos/ManterEmprestimo';
+import { NovoEmprestimoModal } from '../Emprestimos/ManterEmprestimo.jsx';
 
 export default function LivrosPage({ user, isAdminOrBiblio }) {
   const [livros, setLivros] = useState([]);
@@ -10,6 +10,8 @@ export default function LivrosPage({ user, isAdminOrBiblio }) {
   const [generos, setGeneros] = useState([]);
   const [showCreate, setShowCreate] = useState(false);
   const [showLivro, setShowLivro] = useState(null);
+  const [showEmprestar, setShowEmprestar] = useState(null);
+
 
   
 
@@ -143,7 +145,7 @@ export default function LivrosPage({ user, isAdminOrBiblio }) {
     );
   }
 
-  // --- Modal de livro (edição/exclusão) ---
+  // --- Modal de livro (edição/exclusão/emprestimo) ---
   function LivroModal({ livro, onClose, onUpdated, isAdminOrBiblio }) {
     const [editMode, setEditMode] = useState(false);
     const [form, setForm] = useState({ nome: livro.nome, autor: livro.autor,   disponibilidade: livro.disponibilidade, genero: livro.genero?.id });
@@ -220,7 +222,16 @@ export default function LivrosPage({ user, isAdminOrBiblio }) {
             {isAdminOrBiblio && !editMode && <button className = 'sgb-btn-editar' type="button" onClick={() => setEditMode(true)}>Editar</button>}
             {isAdminOrBiblio && editMode && <button type="submit" disabled={loading}>{loading ? 'Salvando...' : 'Salvar'}</button>}
             {isAdminOrBiblio && <button className = 'sgb-btn-excluir' type="button" onClick={handleDelete}>Excluir</button>}
-            {form.disponibilidade!= "INDISPONIVEL" && <button type="submit" className="sgb-btn-emprestar" onClick={EmprestimosPage.handleSalvar(l)}disabled={loading}>{loading ? 'Emprestando...' : 'Emprestar'}</button>}
+            {form.disponibilidade !== "INDISPONIVEL" && (
+              <button
+                type="button"
+                className="sgb-btn-emprestar"
+                onClick={() => setShowEmprestar(livro)}
+                disabled={loading}
+              >
+                {loading ? 'Emprestando...' : 'Emprestar'}
+              </button>
+            )}
           </div>
         </form>
       </div>
@@ -247,6 +258,14 @@ export default function LivrosPage({ user, isAdminOrBiblio }) {
 
       {showCreate && <CriarLivroForm onClose={() => setShowCreate(false)} onCreated={data => { setShowLivro(data); setShowCreate(false); }} />}
       {showLivro && <LivroModal livro={showLivro} onClose={() => setShowLivro(null)} onUpdated={buscarLivros} isAdminOrBiblio={isAdminOrBiblio} />}
+      {showEmprestar && (
+        <NovoEmprestimoModal
+          onClose={() => setShowEmprestar(null)}
+          onSuccess={() => { buscarLivros(); setShowEmprestar(null); }}
+          perfil={user?.perfil || localStorage.getItem('perfil')}
+          livroSelecionado={showEmprestar}
+        />
+      )}
       {error && <p className="sgb-error">{error}</p>}
 
       <div className="sgb-livros-list">

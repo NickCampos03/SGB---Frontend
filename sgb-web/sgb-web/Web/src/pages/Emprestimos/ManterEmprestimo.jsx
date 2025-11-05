@@ -329,15 +329,26 @@ function NovoEmprestimoModal({ onClose, onSuccess, perfil, livroSelecionado }) {
 
     fetch('/emprestimos', {
       method: 'POST',
-      headers: { 'Content-Type':'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      },
       body: JSON.stringify(body)
     })
-      .then(res => res.ok ? res.json() : Promise.reject(res))
-      .then(() => { setSuccess('Empréstimo realizado com sucesso!'); onSuccess(); })
-      .catch(async err => {
-        let msg = 'Erro ao realizar empréstimo.';
-        if (err && err.json) { try { const data = await err.json(); if (data?.message) msg = data.message; } catch {} }
-        setError(msg);
+      .then(async res => {
+        const data = await res.json().catch(() => ({})); 
+        if (!res.ok) {
+          const msg = data?.message || data?.error;
+          throw new Error(msg);
+        }
+        return data;
+      })
+      .then(() => {
+        setSuccess('Empréstimo realizado com sucesso!');
+        onSuccess();
+      })
+      .catch(err => {
+        setError(err.message || 'Erro ao realizar empréstimo.');
       })
       .finally(() => setLoading(false));
   }

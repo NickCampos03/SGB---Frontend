@@ -9,6 +9,8 @@ const PERFIS = [
 
 export default function UsuarioPage({ user }) {
   const [usuarios, setUsuarios] = useState([]);
+  const [todosUsuarios, setTodosUsuarios] = useState([]);
+  const [filtros, setFiltros] = useState({ nomeUsuario: '' });
   const [filtroPerfil, setFiltroPerfil] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -23,20 +25,40 @@ export default function UsuarioPage({ user }) {
     setError('');
     let url = '/usuarios';
     if (filtroPerfil) url += `?perfil=${filtroPerfil}`;
+
     fetch(url, {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
     })
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error('Erro ao buscar usuários');
+        return res.json();
+      })
       .then(data => {
         let lista = Array.isArray(data) ? data : [];
         if (isBiblio) {
           lista = lista.filter(u => u.perfil !== 'ADMIN');
         }
         setUsuarios(lista);
+        setTodosUsuarios(lista); // mantém cópia completa
       })
       .catch(() => setError('Erro ao buscar usuários.'))
       .finally(() => setLoading(false));
   }, [filtroPerfil, reload, isBiblio]);
+
+  useEffect(() => {
+    let filtrados = [...todosUsuarios];
+    if (filtros.nomeUsuario) {
+      filtrados = filtrados.filter(u =>
+        u.nome?.toLowerCase().includes(filtros.nomeUsuario.toLowerCase())
+      );
+    }
+    setUsuarios(filtrados);
+  }, [filtros, todosUsuarios]);
+
+  function handleFiltroChange(e) {
+    const { name, value } = e.target;
+    setFiltros(f => ({ ...f, [name]: value }));
+  }
 
   function handlePerfilChange(e) {
     setFiltroPerfil(e.target.value);
@@ -66,6 +88,12 @@ export default function UsuarioPage({ user }) {
         >
           + Novo
         </button>
+        <input
+          name="nomeUsuario"
+          placeholder="Filtrar por usuário"
+          value={filtros.nomeUsuario}
+          onChange={handleFiltroChange}
+        />
         <select name="perfil" value={filtroPerfil} onChange={handlePerfilChange} style={{ minWidth: 180 }}>
           {PERFIS.map(p => (
             <option key={p.value} value={p.value}>
@@ -334,7 +362,16 @@ function CriarUsuarioModal({ onClose, onCreated, isAdmin, isBiblio }) {
         <input type="text" name="nome" placeholder="Nome" value={form.nome} onChange={handleChange} required />
         <input type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange} required />
         <input type="text" name="telefone" placeholder="Telefone" value={form.telefone} onChange={handleChange} maxLength="11" required minLength= "11"/>
-        <input type="date" name="dataNascimento" placeholder="Data de Nascimento" value={form.dataDeNascimento} onChange={handleChange} required />
+        <input type={form.showDate ? "date" : "text"}
+          name="dataDeNascimento"
+          placeholder="Data de nascimento"
+          value={form.dataDeNascimento}
+          onFocus={(e) => e.target.type = "date"}
+          onBlur={(e) => {
+            if (!e.target.value) e.target.type = "text";
+          }}
+          onChange={handleChange}
+          required/>
 
         {isAdmin ? (
           <select name="perfil" value={form.perfil} onChange={handleChange} required>

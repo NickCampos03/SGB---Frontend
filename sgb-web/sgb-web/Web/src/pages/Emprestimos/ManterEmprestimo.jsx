@@ -4,7 +4,13 @@ export default function EmprestimosPage({ user }) {
   const [emprestimos, setEmprestimos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [filtros, setFiltros] = useState({ emAtraso: '', usuario: '', codigoLivro: '' });
+  const [filtros, setFiltros] = useState({
+    emAtraso: '',
+    usuario: '',
+    codigoLivro: '',
+    nomeLivro: '',
+    nomeUsuario: ''
+  });
   const [usuarios, setUsuarios] = useState([]);
   const [livros, setLivros] = useState([]);
   const [showModalEmprestimo, setShowModalEmprestimo] = useState(null);
@@ -57,6 +63,7 @@ export default function EmprestimosPage({ user }) {
 function buscarEmprestimos() {
   setLoading(true);
   setError('');
+
   const params = [];
 
   if (filtros.emAtraso === 'true') params.push('emAtraso=true');
@@ -76,8 +83,28 @@ function buscarEmprestimos() {
   fetch(`/emprestimos${query}`, {
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
   })
-    .then(res => res.json())
-    .then(data => setEmprestimos(Array.isArray(data) ? data : []))
+    .then(res => {
+      if (!res.ok) throw new Error("Erro ao buscar empréstimos");
+      return res.json();
+    })
+    .then(data => {
+      let lista = Array.isArray(data) ? data : [];
+
+      // --- 🔍 Filtros locais (como na LivrosPage) ---
+      if (filtros.nomeLivro) {
+        lista = lista.filter(e =>
+          e.livro?.nome?.toLowerCase().includes(filtros.nomeLivro.toLowerCase())
+        );
+      }
+
+      if (filtros.nomeUsuario) {
+        lista = lista.filter(e =>
+          e.usuario?.nome?.toLowerCase().includes(filtros.nomeUsuario.toLowerCase())
+        );
+      }
+
+      setEmprestimos(lista);
+    })
     .catch(() => setError('Erro ao buscar empréstimos.'))
     .finally(() => setLoading(false));
 }
@@ -102,24 +129,26 @@ function buscarEmprestimos() {
     <>
       <h2>Empréstimos</h2>
       <div className="sgb-livros-filtros" style={{ marginBottom: '1.5rem' }}>
+        <input
+          name="nomeLivro"
+          placeholder="Filtrar por nome do livro"
+          value={filtros.nomeLivro}
+          onChange={handleFiltroChange}
+        />
+
+        <input
+          name="nomeUsuario"
+          placeholder="Filtrar por usuário"
+          value={filtros.nomeUsuario}
+          onChange={handleFiltroChange}
+        />
         <select name="emAtraso" value={filtros.emAtraso} onChange={handleFiltroChange} style={{ minWidth: 140 }}>
           <option value="">Todos</option>
           <option value="true">Em atraso</option>
           <option value="false">Em dia</option>
           <option value="entregue">Entregue</option>
         </select>
-        {!isUsuario && (
-          <select name="usuario" value={filtros.codigoLogin} onChange={handleFiltroChange} style={{ minWidth: 180 }}>
-            <option value="">Selecione o usuário</option>
-            {usuarios.map(u => <option key={u.codigoLogin} value={u.codigoLogin}>{u.nome} #{u.codigoLogin}</option>)}
-          </select>
-        )}
-        <select name="codigoLivro" value={filtros.codigoLivro} onChange={handleFiltroChange} style={{ minWidth: 180 }}>
-          <option value="">Selecione o livro</option>
-          {livros.map(l => (<option key={l.codigoLivro} value={l.codigoLivro}>{l.nomeLivro} #{l.codigoLivro}</option>))}
-        </select>
       </div>
-
       {error && <p className="sgb-error">{error}</p>}
 
       <div className="sgb-emprestimos-list">

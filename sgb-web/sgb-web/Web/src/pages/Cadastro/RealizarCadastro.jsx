@@ -103,13 +103,18 @@ export default function RealizarCadastro() {
         />
 
         <input
-          type="date"
+          type={form.showDate ? "date" : "text"}
           name="dataDeNascimento"
+          placeholder="Data de nascimento"
           value={form.dataDeNascimento}
+          onFocus={(e) => e.target.type = "date"}
+          onBlur={(e) => {
+            if (!e.target.value) e.target.type = "text";
+          }}
           onChange={handleChange}
           required
         />
-
+        
         <input
           type="password"
           name="senha"

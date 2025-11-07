@@ -140,7 +140,7 @@ function UsuarioCard({ usuario, onClick }) {
           Usuário #{usuario.codigoLogin}
         </div>
         <div><b>Nome:</b> {usuario.nome}</div>
-        <div><b>Email:</b> {usuario.email}</div>
+        <div><b>Email:</b> <br></br> {usuario.email}</div>
         <div><b>Telefone:</b> {usuario.telefone}</div>
         <div><b>Data de Nascimento:</b><br></br>{usuario.dataDeNascimento}</div>
         <div><b>Perfil:</b> {usuario.perfil}</div>

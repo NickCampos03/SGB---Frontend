@@ -397,10 +397,11 @@ function NovoEmprestimoModal({ onClose, onSuccess, perfil, livroSelecionado }) {
           </>
         )}
         <label>Livro</label>
-        <select value={livro} onChange={e => setLivro(e.target.value)} required>
-          <option value="">Selecione o livro</option>
-          {livros.map(l => <option key={l.codigoLivro} value={l.codigoLivro}>{l.nome} #{l.codigoLivro}</option>)}
-        </select>
+        <input 
+          type="text" 
+          value={livroSelecionado ? `${livroSelecionado.nome} #${livroSelecionado.codigoLivro}` : ''} 
+          readOnly 
+        />
         {error && <div className="sgb-error">{error}</div>}
         {success && <div className="sgb-success">{success}</div>}
         <button type="submit" className="sgb-btn-emprestar" disabled={loading}>{loading ? 'Salvando...' : 'Salvar'}</button>

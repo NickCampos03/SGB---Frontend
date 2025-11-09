@@ -46,7 +46,11 @@ export default function LivrosPage({ user, isAdminOrBiblio }) {
       if (!res.ok) throw new Error(`Erro ${res.status}`);
       return res.json();
     })
-    .then(data => setLivros(Array.isArray(data) ? data : []))
+    .then(data => {
+      let lista = Array.isArray(data) ? data : [];
+      lista.sort((a, b) => a.nome.localeCompare(b.nome, 'pt', { sensitivity: 'base' }));
+      setLivros(lista);
+    })
     .catch(() => setError('Erro ao buscar livros.'))
     .finally(() => setLoading(false));
 }

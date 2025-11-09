@@ -18,7 +18,14 @@ export default function GeneroPage({ user, isAdminOrBiblio }) {
         if (!res.ok) throw new Error(`Erro ${res.status}`);
         return res.json();
       })
-      .then((data) => setGeneros(Array.isArray(data) ? data : []))
+      .then((data) => {
+        if (Array.isArray(data)) {
+          data.sort((a, b) => a.nome.localeCompare(b.nome));
+          setGeneros(data);
+        } else {
+          setGeneros([]);
+        }
+      })
       .catch(() => setError("Erro ao buscar gêneros."))
       .finally(() => setLoading(false));
   }

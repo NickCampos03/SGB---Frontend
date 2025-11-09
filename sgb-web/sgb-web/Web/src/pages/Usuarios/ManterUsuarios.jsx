@@ -33,14 +33,17 @@ export default function UsuarioPage({ user }) {
         if (!res.ok) throw new Error('Erro ao buscar usuários');
         return res.json();
       })
-      .then(data => {
-        let lista = Array.isArray(data) ? data : [];
-        if (isBiblio) {
-          lista = lista.filter(u => u.perfil !== 'ADMIN');
-        }
-        setUsuarios(lista);
-        setTodosUsuarios(lista); // mantém cópia completa
-      })
+    .then(data => {
+      let lista = Array.isArray(data) ? data : [];
+
+      if (isBiblio) {
+        lista = lista.filter(u => u.perfil !== 'ADMIN');
+      }
+      lista.sort((a, b) => a.nome.localeCompare(b.nome, 'pt', { sensitivity: 'base' }));
+
+      setUsuarios(lista);
+      setTodosUsuarios(lista);
+    })
       .catch(() => setError('Erro ao buscar usuários.'))
       .finally(() => setLoading(false));
   }, [filtroPerfil, reload, isBiblio]);

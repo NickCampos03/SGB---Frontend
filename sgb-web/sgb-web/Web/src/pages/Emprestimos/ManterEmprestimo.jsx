@@ -23,7 +23,7 @@ export default function EmprestimosPage({ user }) {
   // Buscar usuários
   useEffect(() => {
     if (!isUsuario) {
-      fetch('/usuarios?perfil=USUARIO', {
+      fetch('/usuarios', {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       })
         .then(res => res.json())
@@ -102,7 +102,7 @@ function buscarEmprestimos() {
           e.usuario?.nome?.toLowerCase().includes(filtros.nomeUsuario.toLowerCase())
         );
       }
-
+      lista.sort((a, b) => a.codigoEmprestimo - b.codigoEmprestimo);
       setEmprestimos(lista);
     })
     .catch(() => setError('Erro ao buscar empréstimos.'))
@@ -297,7 +297,7 @@ function handleSalvar(e) {
 }
 
 // ================== Modal de Novo Empréstimo ==================
-function NovoEmprestimoModal({ onClose, onSuccess, perfil, livroSelecionado }) {
+function NovoEmprestimoModal({ onClose, perfil, livroSelecionado }) {
   const [usuarios, setUsuarios] = useState([]);
   const [livros, setLivros] = useState([]);
   const [usuario, setUsuario] = useState('');
@@ -313,7 +313,7 @@ function NovoEmprestimoModal({ onClose, onSuccess, perfil, livroSelecionado }) {
 
     useEffect(() => {
       if (!isUsuario) {
-        fetch('/usuarios?perfil=USUARIO', {
+        fetch('/usuarios', {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         })
           .then(res => res.json())
@@ -374,7 +374,6 @@ function NovoEmprestimoModal({ onClose, onSuccess, perfil, livroSelecionado }) {
       })
       .then(() => {
         setSuccess('Empréstimo realizado com sucesso!');
-        onSuccess();
       })
       .catch(err => {
         setError(err.message || 'Erro ao realizar empréstimo.');

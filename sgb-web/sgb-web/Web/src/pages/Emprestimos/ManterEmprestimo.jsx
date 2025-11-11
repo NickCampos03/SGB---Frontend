@@ -261,7 +261,13 @@ function handleSalvar(e) {
           <b>Retirada:</b> {formatDataBR(emprestimoAtual.dataDeRetirada)}<br/>
           <b>Prevista:</b> {formatDataBR(emprestimoAtual.dataPrevista)}<br/>
           <b>Entrega:</b> {editEntrega ? (
-            <input type="date" value={dataEntrega} onChange={e => setDataEntrega(e.target.value)} required style={{marginLeft:4}} />
+            <input
+              type="date"
+              value={dataEntrega}
+              onChange={e => setDataEntrega(e.target.value)}
+              required
+              style={{ marginLeft: 4 }}
+            />
           ) : (
             formatDataBR(emprestimoAtual.dataDeEntrega)
           )}<br/>
@@ -472,8 +478,11 @@ function EmprestimoCard({ emprestimo, onClick, isClickable }) {
 
 function formatDataBR(data) {
   if (!data) return '-';
-  const d = new Date(data);
-  if (isNaN(d)) return data;
-  return d.toLocaleDateString('pt-BR');
+  // Evita conversão de fuso horário
+  if (/^\d{4}-\d{2}-\d{2}$/.test(data)) {
+    const [ano, mes, dia] = data.split('-');
+    return `${dia}/${mes}/${ano}`;
+  }
+  return data;
 }
 export { NovoEmprestimoModal };

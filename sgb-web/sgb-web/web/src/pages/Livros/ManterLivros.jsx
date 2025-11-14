@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { NovoEmprestimoModal } from '../Emprestimos/ManterEmprestimo.jsx';
+import { NovoEmprestimoModal } from '../emprestimos/ManterEmprestimo.jsx';
 
 export default function LivrosPage({ user, isAdminOrBiblio }) {
   const [livros, setLivros] = useState([]);

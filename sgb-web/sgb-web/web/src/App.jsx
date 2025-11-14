@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
-import Login from "./pages/Login/RealizarLogin";
-import RealizarCadastro from "./pages/Cadastro/RealizarCadastro";
+import Login from "./pages/login/RealizarLogin";
+import RealizarCadastro from "./pages/cadastro/RealizarCadastro";
 import SideMenu from "./components/SideMenu";
 import MainContent from "./components/MainContent";
 
